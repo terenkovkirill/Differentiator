@@ -1,12 +1,15 @@
+#include <TXLib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
+
 #include "diff.h"
 
-Node_t* NewNode(Node_t* node, int type, int value)
+
+Node_t* NewNode(Node_t* root, int type, int value)
 {
     Node_t* node = (Node_t *)calloc(1, sizeof(Node_t));
 
@@ -25,6 +28,7 @@ Node_t* ReadExpression(const char* file)
     if (file_ptr == NULL) 
         printf(" \n ERROR file pointer = NULL:   Line %d, Function %s \n", __LINE__, __func__);
 
+    
     struct stat file_data = {};
     if (fstat(fileno(file_ptr), &file_data) != 0)
         printf(" \n ERROR Couldn`t retrieve length of the file:   Line %d, Function %s \n", __LINE__, __func__);
@@ -37,7 +41,7 @@ Node_t* ReadExpression(const char* file)
     }
 
     int read_count = fread(buffer, sizeof(char), file_len, file_ptr);
-    if (read_count != file_len)
+    if (read_count != file_len) 
     {
         printf(" \n ERROR Failed to read file:   Line %d, Function %s \n", __LINE__, __func__);
     }
@@ -49,4 +53,4 @@ Node_t* ReadExpression(const char* file)
 
 //=====================================================================
 
-Node_t* CreatTree(char *buffer)
+//Node_t* CreateTree(char *buffer);
