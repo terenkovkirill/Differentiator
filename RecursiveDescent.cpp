@@ -1,42 +1,34 @@
 #include <stdio.h>
+#include <assert.h>
+
 #include "RecursiveDescent.h"
+#include "diff.h"
 
 //const char* s = "7-2";
 
 
-/*
+/* Grammar
 G ::= E$
 E ::= T{['+''-']T}*
 T ::= P{['*''/']P}*
 P ::= '('E')' | N
 N ::= ['0'-'9']+
-V ::= 'X'
 */
+
+//сигма+: "2 ^ 3", "2 ^ 3 + 1", "(2 + 3) ^ 4, "2 ^ (3 + 4)", "(1 + 3) ^ (3 + 4)"
+//сигма-: "2^", "^2", "2 ^"
 
 
 //char s[] = "25*10*(3*(25-10*2)+1)";
 //char s[] = "25 * 10 * (3 * (25 - 10 * 2) + 1)$";
 
-int main()
+
+Node_t* GetG(ArgRec* arg_rec)
 {
-    struct ArgRecursion arg_rec = {0,"25 * 10 * (3 * (25 - 10 * 2) + 1)$"};
-    //arg_rec.s = "77-8";
-    //arg_rec.s = "25*10*(3*(25-10)*2)+1)";
+    assert(arg_rec != NULL);
 
-    arg_rec.p = 0;
-    int result  = GetG(&arg_rec);
-    printf("s[p] = %c  Called from function %s line %d \n", arg_rec.s[arg_rec.p], __func__, __LINE__);
-    if (result != 0)
-        printf("It works \n");
-    printf("result = %d", result);
-
-    return 0;
-}
-
-int GetG(ArgRecursion* arg_rec)
-{
     printf("I was called from function %s line %d \n", __func__, __LINE__);
-    int val = GetE(arg_rec);
+    Node_t* val = GetE(arg_rec);
     printf("s[p] = '%c' (char) \n", arg_rec->s[arg_rec->p]);
     if (arg_rec->s[arg_rec->p] != '$')
     {
@@ -46,43 +38,50 @@ int GetG(ArgRecursion* arg_rec)
     return val;
 }
 
+//=====================================================================
 
-int GetE(ArgRecursion* arg_rec)
+Node_t* GetE(ArgRec* arg_rec)
 {
+    assert(arg_rec != NULL);
+
     printf("I was called from function %s line %d \n", __func__, __LINE__);
-    int val = GetT(arg_rec);
+    Node_t* val = GetT(arg_rec);
 
     while (arg_rec->s[arg_rec->p] == '+' || arg_rec->s[arg_rec->p] == '-')
     {    
         int op = arg_rec->s[arg_rec->p];
         arg_rec->p++;
 
-        int val2 = GetT(arg_rec);
+        Node_t* val2 = GetT(arg_rec);
+
         if (op == '+')
-            val += val2;
+            val = NewNode(OP, ADD, val, val2);
         else
-            val -= val2;
+            val = NewNode(OP, SUB, val, val2);
     }
 
     return val;
 }
 
-int GetT(ArgRecursion* arg_rec)
+//=====================================================================
+
+Node_t* GetT(ArgRec* arg_rec)
 {
+    assert(arg_rec != NULL);
     printf("I was called from function %s line %d \n", __func__, __LINE__);
 
-    int val = GetP(arg_rec);
+    Node_t* val = GetP(arg_rec);
     printf("GetT, Line %d, s[p] = '%c' \n", __LINE__, arg_rec->s[arg_rec->p]);
 
     while (arg_rec->s[arg_rec->p] == '*' || arg_rec->s[arg_rec->p] == '/')
     {
         int op = arg_rec->s[arg_rec->p];
         arg_rec->p++;
-        int val2 = GetP(arg_rec);
+        Node_t* val2 = GetP(arg_rec);
         if (op == '*')
-            val *= val2;
+            val = NewNode(OP, MUL, val, val2);
         else 
-            val /= val2;
+            val = NewNode(OP, DIV, val, val2);
         
         printf("In cycle in GetT \n");
     }
@@ -92,8 +91,11 @@ int GetT(ArgRecursion* arg_rec)
     return val;
 }
 
-int GetP(ArgRecursion* arg_rec)
+//=====================================================================
+
+Node_t* GetP(ArgRec* arg_rec)
 {
+    assert(arg_rec != NULL);
     printf("I was called from function %s line %d , s[p] = %c \n", __func__, __LINE__, arg_rec->s[arg_rec->p]);
 
     if(arg_rec->s[arg_rec->p] == ' ')                                                                   //ПРОБЕЛЫ
@@ -102,7 +104,7 @@ int GetP(ArgRecursion* arg_rec)
     if(arg_rec->s[arg_rec->p] == '(')
     {
         arg_rec->p++;
-        int val = GetE(arg_rec);
+        Node_t* val = GetE(arg_rec);
 
         if (arg_rec->s[arg_rec->p] != ')')
         {
@@ -124,9 +126,12 @@ int GetP(ArgRecursion* arg_rec)
         return GetN(arg_rec);
 }
 
+//=====================================================================
 
-int GetN(ArgRecursion* arg_rec)
+Node_t* GetN(ArgRec* arg_rec)
 {
+    assert(arg_rec != NULL);
+    
     if  (arg_rec->s[arg_rec->p] == ' ')                                                             //ПРОБЕЛЫ
         arg_rec->p++;   
 
@@ -151,7 +156,7 @@ int GetN(ArgRecursion* arg_rec)
     
     printf("s[p] = %c in the end of function GetN \n", arg_rec->s[arg_rec->p]);
 
-    return val;
+    return NewNode(NUM, val, NULL, NULL);
 }
 
 
@@ -165,6 +170,7 @@ int GetN(ArgRecursion* arg_rec)
 //     }
 // }
 
+//=====================================================================
 
 int SyntaxError(int error, const char* func, int line)
 {
@@ -182,3 +188,20 @@ int SyntaxError(int error, const char* func, int line)
 
     return 1;                                                                           //норма?
 }
+
+
+// int main()
+// {
+//     struct ArgRecursion arg_rec = {0,"25 * 10 * (3 * (25 - 10 * 2) + 1)$"};
+//     //arg_rec.s = "77-8";
+//     //arg_rec.s = "25*10*(3*(25-10)*2)+1)";
+
+//     arg_rec.p = 0;
+//     int result  = GetG(&arg_rec);
+//     printf("s[p] = %c  Called from function %s line %d \n", arg_rec.s[arg_rec.p], __func__, __LINE__);
+//     if (result != 0)
+//         printf("It works \n");
+//     printf("result = %d", result);
+
+//     return 0;
+// }

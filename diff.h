@@ -1,4 +1,10 @@
+#ifndef DIFF_H
+#define DIFF_H
+
+
 #include <stdio.h>
+
+#include "RecursiveDescent.h"
 
 struct Node_t
 {
@@ -23,8 +29,13 @@ enum OperationType
     MUL = '*'
 };
 
-Node_t* NewNode(Node_t* node, int type, int value);
-Node_t* ReadExpression(const char* file);
-Node_t* CreatTree(char *buffer);
-//void PrintPreorder(Node_t* node, const char* file);
-//int GrafDump(Node_t* node);
+Node_t* NewNode(int type, int value, Node_t* left, Node_t* right);
+struct ArgRec ReadExpression(const char* file);
+int GrafDump(Node_t* node);
+int PreorderTraversal(Node_t* node, FILE* graf_dump);
+
+//Node_t* CreatTree(char *buffer);
+
+
+
+#endif 

@@ -1,9 +1,15 @@
+#ifndef RECURSIVE_DESCENT_H
+#define RECURSIVE_DESCENT_H
+
+
 #include <stdio.h>
 
-struct ArgRecursion
+#include "diff.h"
+
+struct ArgRec
 {
     int p;
-    const char *s;
+    char *s;
 };
 
 enum Errors_of_recursion
@@ -14,9 +20,12 @@ enum Errors_of_recursion
 
 #define SYNTAX_ERROR(error) SyntaxError(error, __func__, __LINE__)
 
-int GetG(ArgRecursion* arg_rec);
-int GetN(ArgRecursion* arg_rec);
-int GetE(ArgRecursion* arg_rec);
-int GetP(ArgRecursion* arg_rec);
-int GetT(ArgRecursion* arg_rec);
+Node_t* GetG(ArgRec* arg_rec);
+Node_t* GetN(ArgRec* arg_rec);
+Node_t* GetE(ArgRec* arg_rec);
+Node_t* GetP(ArgRec* arg_rec);
+Node_t* GetT(ArgRec* arg_rec);
 int SyntaxError(int error, const char* func, int line);
+
+
+#endif

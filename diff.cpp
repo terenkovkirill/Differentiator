@@ -5,23 +5,28 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-
 #include "diff.h"
+#include "RecursiveDescent.h"
 
 
-Node_t* NewNode(Node_t* root, int type, int value)
+Node_t* NewNode(int type, int value, Node_t* left, Node_t* right)
 {
+    assert(left != NULL);
+    assert(right != NULL);
+
     Node_t* node = (Node_t *)calloc(1, sizeof(Node_t));
 
     node->type = type;
     node->value = value;
-    node->left = NULL;
-    node->right = NULL;
+    node->left = left;
+    node->right = right;
+
+    return node;
 }
 
 //=====================================================================
 
-Node_t* ReadExpression(const char* file)
+struct ArgRec ReadExpression(const char* file)          //Можно возвращать указатель на структуру
 {
     FILE* file_ptr = fopen(file, "rb");
     
@@ -48,9 +53,73 @@ Node_t* ReadExpression(const char* file)
 
     fclose(file_ptr);
     
-    return CreatTree(buffer);
+    struct ArgRec arg_rec;
+    arg_rec.p = 0;
+    arg_rec.s = buffer;
+    
+    return arg_rec;
 }
 
 //=====================================================================
 
-//Node_t* CreateTree(char *buffer);
+int GrafDump(Node_t* node)
+{
+    assert(node != NULL);
+
+    FILE* graf_dump = fopen("graf_dump.dot", "w");
+    if (graf_dump == NULL)
+    {
+        printf("Unable to open file \"garf_dump.dot\" \n");
+        return -1;
+    }
+
+    fprintf(graf_dump, "strict digraph \n { \n");                       //строгий (одно ребро между 2 узлами) ориентированный граф
+    fprintf(graf_dump, "rankdir = \"TB\"; \n \n");                      //начальная ориентация сверху вниз
+    fprintf(graf_dump, "node[shape = Mrecord]; \n");                     //форма для записи (закруглённые узлы)
+
+    PreorderTraversal(node, graf_dump);
+
+    fprintf(graf_dump, "}");
+
+    fclose(graf_dump);
+    system("dot graf_dump.dot -T png -o graf_dump.png");    
+
+    return 0;
+}
+
+//=====================================================================
+
+int PreorderTraversal(Node_t* node, FILE* graf_dump)
+{
+    assert(node != NULL);
+    assert(graf_dump != NULL);
+
+    if (node->type == NUM)
+        fprintf(graf_dump, "node%p[style = filled, fillcolor = \"#40e0d0\", label = \"{type = num | value = %d | {LEFT = %p | RIGHT = %p}}\" ];\n", 
+                            node, node->value, node->left, node->right);                            //зачем здесь left и right ? 
+
+    else if (node->type == OP)
+        fprintf(graf_dump, "node%p[style = filled, fillcolor = \"#a0522d\", label = \"{type = op  | value = %d \\n (OpType) | {LEFT = %p | RIGHT = %p}}\" ];\n", 
+                            node, node->value, node->left, node->right);
+    
+    else 
+        fprintf(graf_dump, "node%p[style = filled, fillcolor = \"#ff0000\", label = \"{type = var | value = %d \\n (NumVar)| {LEFT = %p | RIGHT = %p}}\" ];\n", 
+                            node, node->value, node->left, node->right);
+
+
+    if (node->left)
+        fprintf(graf_dump, "node%p -> node%p;\n", node, node->left);
+        PreorderTraversal(node->left, graf_dump);
+
+    if (node->right)
+        fprintf(graf_dump, "node%p -> node%p;\n", node, node->right);
+        PreorderTraversal(node->right, graf_dump);
+
+    return 0;
+}
+
+
+/*Миша:         The term 'run' is not recognized....
+                Нужно ли, чтобы 2 последние функции возвращали нули?
+                ?? по реализации дифферециатора
+*/
