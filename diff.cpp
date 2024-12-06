@@ -1,9 +1,7 @@
-#include <TXLib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+
 
 #include "diff.h"
 #include "RecursiveDescent.h"
@@ -11,9 +9,6 @@
 
 Node_t* NewNode(int type, int value, Node_t* left, Node_t* right)
 {
-    assert(left != NULL);
-    assert(right != NULL);
-
     Node_t* node = (Node_t *)calloc(1, sizeof(Node_t));
 
     node->type = type;
@@ -22,42 +17,6 @@ Node_t* NewNode(int type, int value, Node_t* left, Node_t* right)
     node->right = right;
 
     return node;
-}
-
-//=====================================================================
-
-struct ArgRec ReadExpression(const char* file)          //Можно возвращать указатель на структуру
-{
-    FILE* file_ptr = fopen(file, "rb");
-    
-    if (file_ptr == NULL) 
-        printf(" \n ERROR file pointer = NULL:   Line %d, Function %s \n", __LINE__, __func__);
-
-    
-    struct stat file_data = {};
-    if (fstat(fileno(file_ptr), &file_data) != 0)
-        printf(" \n ERROR Couldn`t retrieve length of the file:   Line %d, Function %s \n", __LINE__, __func__);
-    int file_len = file_data.st_size;
-
-    char* buffer = (char *)calloc(file_len, sizeof(char));
-    if (!buffer)
-    {
-        printf(" \n ERROR Failed to allocate buffer memory:   Line %d, Function %s \n", __LINE__, __func__);
-    }
-
-    int read_count = fread(buffer, sizeof(char), file_len, file_ptr);
-    if (read_count != file_len) 
-    {
-        printf(" \n ERROR Failed to read file:   Line %d, Function %s \n", __LINE__, __func__);
-    }
-
-    fclose(file_ptr);
-    
-    struct ArgRec arg_rec;
-    arg_rec.p = 0;
-    arg_rec.s = buffer;
-    
-    return arg_rec;
 }
 
 //=====================================================================
@@ -104,20 +63,54 @@ int PreorderTraversal(Node_t* node, FILE* graf_dump)
     
     else 
         fprintf(graf_dump, "node%p[style = filled, fillcolor = \"#ff0000\", label = \"{type = var | value = %d \\n (NumVar)| {LEFT = %p | RIGHT = %p}}\" ];\n", 
-                            node, node->value, node->left, node->right);
+                            node, node->value, node->left, node->right); // left_node[style=filled, fillcolor = "red"]
 
 
-    if (node->left)
+    if (node->left) 
+    {
         fprintf(graf_dump, "node%p -> node%p;\n", node, node->left);
         PreorderTraversal(node->left, graf_dump);
+    }
 
     if (node->right)
+    {
         fprintf(graf_dump, "node%p -> node%p;\n", node, node->right);
         PreorderTraversal(node->right, graf_dump);
+    }
 
     return 0;
 }
 
+//=====================================================================
+
+Node_t* diff(Node_t* node)
+{
+    if (node->type == NUM)
+        return NewNode(NUM, node->value, NULL, NULL);
+    
+    if (node->type == VAR)
+        return NewNode(VAR, node->value, NULL, NULL);
+    
+    if (node->type == OP)
+    {
+        switch(node->value)
+        {
+            case ADD:
+                return NewNode(OP, ADD, diff(node->left), diff(node->right));
+
+            case MUL:
+            {
+                Node_t* dL = diff(node->left), *dR = diff(node->right);
+                Node_t* cL = copy(node->left), *cR = copy(node->right);
+                
+                return NewNode(OP, ADD, NewNode(OP, MUL, dL, cR), NewNode(OP, MULL, cL, dR));
+            }
+
+            //TODO: добавить сюда ещё кучу (19 - 2) case
+        }
+    }
+    
+}
 
 /*Миша:         The term 'run' is not recognized....
                 Нужно ли, чтобы 2 последние функции возвращали нули?

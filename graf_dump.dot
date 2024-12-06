@@ -1,0 +1,32 @@
+strict digraph 
+ { 
+rankdir = "TB"; 
+ 
+node[shape = Mrecord]; 
+node01226E88[style = filled, fillcolor = "#a0522d", label = "{<left_node> type = op  | value = 42 \n (OpType) | { LEFT = 01226F00  | RIGHT = 01226F48}}" ];
+node01226E88:left_node [fillcolor = "red"];
+node01226E88 -> node01226F00;
+node01226F00[style = filled, fillcolor = "#a0522d", label = "{type = op  | value = 42 \n (OpType) | {LEFT = 01226FA8 | RIGHT = 01226EE8}}" ];
+node01226F00 -> node01226FA8;
+node01226FA8[style = filled, fillcolor = "#40e0d0", label = "{type = num | value = 25 | {LEFT = 00000000 | RIGHT = 00000000}}" ];
+node01226F00 -> node01226EE8;
+node01226EE8[style = filled, fillcolor = "#40e0d0", label = "{type = num | value = 10 | {LEFT = 00000000 | RIGHT = 00000000}}" ];
+node01226E88 -> node01226F48;
+node01226F48[style = filled, fillcolor = "#a0522d", label = "{type = op  | value = 43 \n (OpType) | {LEFT = 01226F18 | RIGHT = 01227050}}" ];
+node01226F48 -> node01226F18;
+node01226F18[style = filled, fillcolor = "#a0522d", label = "{type = op  | value = 42 \n (OpType) | {LEFT = 01226FC0 | RIGHT = 01227038}}" ];
+node01226F18 -> node01226FC0;
+node01226FC0[style = filled, fillcolor = "#40e0d0", label = "{type = num | value = 3 | {LEFT = 00000000 | RIGHT = 00000000}}" ];
+node01226F18 -> node01227038;
+node01227038[style = filled, fillcolor = "#a0522d", label = "{type = op  | value = 45 \n (OpType) | {LEFT = 01226FD8 | RIGHT = 01227020}}" ];
+node01227038 -> node01226FD8;
+node01226FD8[style = filled, fillcolor = "#40e0d0", label = "{type = num | value = 25 | {LEFT = 00000000 | RIGHT = 00000000}}" ];
+node01227038 -> node01227020;
+node01227020[style = filled, fillcolor = "#a0522d", label = "{type = op  | value = 42 \n (OpType) | {LEFT = 01226F30 | RIGHT = 01226F60}}" ];
+node01227020 -> node01226F30;
+node01226F30[style = filled, fillcolor = "#40e0d0", label = "{type = num | value = 10 | {LEFT = 00000000 | RIGHT = 00000000}}" ];
+node01227020 -> node01226F60;
+node01226F60[style = filled, fillcolor = "#40e0d0", label = "{type = num | value = 2 | {LEFT = 00000000 | RIGHT = 00000000}}" ];
+node01226F48 -> node01227050;
+node01227050[style = filled, fillcolor = "#40e0d0", label = "{type = num | value = 1 | {LEFT = 00000000 | RIGHT = 00000000}}" ];
+}

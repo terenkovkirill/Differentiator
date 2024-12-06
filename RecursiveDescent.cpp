@@ -1,5 +1,8 @@
+#include <TXLib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "RecursiveDescent.h"
 #include "diff.h"
@@ -86,7 +89,7 @@ Node_t* GetT(ArgRec* arg_rec)
         printf("In cycle in GetT \n");
     }
 
-    printf("%d line: %d\n", val, __LINE__);
+    printf("%p line: %d\n", val, __LINE__);
 
     return val;
 }
@@ -189,6 +192,43 @@ int SyntaxError(int error, const char* func, int line)
     return 1;                                                                           //норма?
 }
 
+//===================================================
+
+struct ArgRec ReadExpression(const char* file)          //Можно возвращать указатель на структуру
+{
+    FILE* file_ptr = fopen(file, "rb");
+    
+    if (file_ptr == NULL) 
+        printf(" \n ERROR file pointer = NULL:   Line %d, Function %s \n", __LINE__, __func__);
+
+    
+    struct stat file_data = {};
+    if (fstat(fileno(file_ptr), &file_data) != 0)
+        printf(" \n ERROR Couldn`t retrieve length of the file:   Line %d, Function %s \n", __LINE__, __func__);
+    int file_len = file_data.st_size;
+
+    char* buffer = (char *)calloc(file_len, sizeof(char));
+    if (!buffer)
+    {
+        printf(" \n ERROR Failed to allocate buffer memory:   Line %d, Function %s \n", __LINE__, __func__);
+    }
+
+    int read_count = fread(buffer, sizeof(char), file_len, file_ptr);
+    if (read_count != file_len) 
+    {
+        printf(" \n ERROR Failed to read file:   Line %d, Function %s \n", __LINE__, __func__);
+    }
+
+    fclose(file_ptr);
+    
+    struct ArgRec arg_rec;
+    arg_rec.p = 0;
+    arg_rec.s = buffer;
+    
+    return arg_rec;
+}
+
+//=====================================================================
 
 // int main()
 // {

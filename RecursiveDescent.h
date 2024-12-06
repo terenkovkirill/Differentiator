@@ -27,5 +27,6 @@ Node_t* GetP(ArgRec* arg_rec);
 Node_t* GetT(ArgRec* arg_rec);
 int SyntaxError(int error, const char* func, int line);
 
+struct ArgRec ReadExpression(const char* file);
 
 #endif

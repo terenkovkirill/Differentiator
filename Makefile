@@ -14,5 +14,5 @@ diff.o: diff.cpp Makefile
 	$(CC) $(CFLAGS) diff.cpp
 
 .PHONY: run
-run:
+run: main.exe
 	./main.exe Expression.txt
