@@ -22,7 +22,7 @@ ExpressionTree.o: ExpressionTree.cpp ExpressionTree.h Makefile
 .PHONY: run clean 
 
 run: main.exe 
-	./main.exe && $(DOT) $(DOTFLAGS) ExpressionTree.dot -o ExpressionTree.png
+	./main.exe && $(DOT) $(DOTFLAGS) ExpressionTree.dot -o ExpressionTree.png && $(DOT) $(DOTFLAGS) TreePicture.dot -o TreePicture.png
 
 clean:
-	rm -f *.o main.exe ExpressionTree.png ExpressionTree.dot
+	rm -f *.o main.exe ExpressionTree.png ExpressionTree.dot TreePicture.png TreePicture.dot

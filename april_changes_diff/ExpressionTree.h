@@ -24,9 +24,25 @@ enum TypeNode
     VAR = 3
 };
 
+enum TypeOperation
+{
+    ADD = '+',
+    SUB = '-',
+    MUL = '*',
+    DIV = '/'
+};
+
+enum NumVariable
+{
+    X = 1,
+    Y = 2
+};
+
 
 Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right);
 CodeError GrafDump(Node_t* node);
 Node_t* RecursiveGrafDump(Node_t* node, FILE* file);
+CodeError GrafPicture(Node_t* node);
+Node_t* RecursiveGrafPicture(Node_t* node, FILE* file);
 
 #endif
