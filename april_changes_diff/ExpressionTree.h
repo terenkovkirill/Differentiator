@@ -14,7 +14,8 @@ struct Node_t
 enum CodeError
 {
     NULL_PTR = 0,
-    OK       = 1
+    OK       = 1,
+    INCORRECT_TREE = 2
 };
 
 enum TypeNode
@@ -34,8 +35,8 @@ enum TypeOperation
 
 enum NumVariable
 {
-    X = 1,
-    Y = 2
+    X = 'X',
+    Y = 'Y'
 };
 
 
@@ -44,5 +45,6 @@ CodeError GrafDump(Node_t* node);
 Node_t* RecursiveGrafDump(Node_t* node, FILE* file);
 CodeError GrafPicture(Node_t* node);
 Node_t* RecursiveGrafPicture(Node_t* node, FILE* file);
+CodeError Calculate(Node_t* node);
 
 #endif

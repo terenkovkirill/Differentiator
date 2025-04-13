@@ -53,6 +53,56 @@ Node_t* RecursiveGrafDump(Node_t* node, FILE* file)
 }
 
 
+CodeError Calculate(Node_t* node)
+{
+    //===========CheckNode=============================
+
+    assert(node != NULL);
+
+    if ((node->left != NULL) ^ (node->right != NULL))                       //Отсутствует один из двух потомков
+        return INCORRECT_TREE;
+    
+    if (node->type == OP && node->left == NULL && node->right == NULL)
+        return INCORRECT_TREE;
+
+    if (node->type == NUM && node->left != NULL && node->right != NULL)
+        return INCORRECT_TREE;
+
+    //=================================================
+
+    if (node->type == NUM)
+        return OK;
+    
+    Calculate(node->left);
+    Calculate(node->right);
+
+    //if (node->type == OP && node->left->type == NUM && node->right->type == NUM)     --может пригодится при добавлении переменной
+
+    node->type = NUM;
+
+    switch(node->value)
+    {
+        case '+':
+            node->value = node->left->value + node->right->value;
+            break;
+        
+        case '-':
+            node->value = node->left->value - node->right->value;
+            break;
+        
+        case '*':
+            node->value = node->left->value * node->right->value;
+            break;
+        
+        case '/':
+            node->value = node->left->value / node->right->value;
+            break;
+    }
+
+    return OK;
+}
+
+
 CodeError GrafPicture(Node_t* node)
 {
     if (!node) return NULL_PTR;
@@ -75,37 +125,21 @@ Node_t* RecursiveGrafPicture(Node_t* node, FILE* file)
 
     switch(node->type)
     {
-    case NUM:
-        fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"%d\"] \n", node, node->value);
-        break;
+        case NUM:
+            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"%d\"] \n", node, node->value);
+            break;
 
-    case VAR:
-        if (node->value == X)
-            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, width = 0.8, height = 0.8, label=\"x\"] \n", node);
+        case VAR:
+            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"%c\"] \n", node, node->value);
+            break;
 
-        else if (node->value == Y)
-            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"y\"] \n", node);
-
-        break;
-
-    case OP:
-        if      (node->value == ADD)
-            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"+\"] \n", node);
+        case OP:
+            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"%c\"] \n", node, node->value);
+            break;
         
-        else if (node->value == SUB)
-            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"−\"] \n", node);
-        
-        else if (node->value == MUL)
-            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"*\"] \n", node);
-
-        else if (node->value == DIV)
-            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"/\"] \n", node);
-
-        break;
-    
-    default:
-        fprintf(stderr, "[INFO] %s:%d %s() Incorrect node->type value \n", __FILE__, __LINE__, __func__);
-        break;
+        default:
+            fprintf(stderr, "[INFO] %s:%d %s() Incorrect node->type value \n", __FILE__, __LINE__, __func__);
+            break;
     }
 
     if (node->left != NULL)
