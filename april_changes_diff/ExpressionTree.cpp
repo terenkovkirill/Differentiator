@@ -53,32 +53,60 @@ Node_t* RecursiveGrafDump(Node_t* node, FILE* file)
 }
 
 
-CodeError Calculate(Node_t* node)
+CodeError CheckNode(Node_t* node)
 {
-    //===========CheckNode=============================
-
     assert(node != NULL);
 
     if ((node->left != NULL) ^ (node->right != NULL))                       //Отсутствует один из двух потомков
-        return INCORRECT_TREE;
+        return ONLY_ONE_CHILD;
     
     if (node->type == OP && node->left == NULL && node->right == NULL)
-        return INCORRECT_TREE;
+        return OP_IS_A_LEAF;
 
     if (node->type == NUM && node->left != NULL && node->right != NULL)
-        return INCORRECT_TREE;
+        return NUM_IS_NOT_LEAF;
 
-    //=================================================
+    return OK;
+}
+
+
+int Calculate(Node_t* node, struct VarValue var_value)
+{
+    CodeError return_value = CheckNode(node);
+
+    if (return_value != OK)
+    {
+        fprintf(stderr, "[DEBUG] %s:%d %s()  Error Incorrect_tree: %d \n", __FILE__, __LINE__, __func__, return_value);
+        return INCORRECT_TREE;
+    }
 
     if (node->type == NUM)
         return OK;
     
-    Calculate(node->left);
-    Calculate(node->right);
+    if (node->type == VAR)
+    {
+        switch(node->value)
+        {
+            case X:
+                node->value = var_value.x;
+                break;
 
-    //if (node->type == OP && node->left->type == NUM && node->right->type == NUM)     --может пригодится при добавлении переменной
+            case Y:
+                node->value = var_value.y;
+                break;
 
-    node->type = NUM;
+            default:
+                fprintf(stderr, "[DEBUG] %s:%d %s() Incorrect node->value for node->type = VAR \n", __FILE__, __LINE__, __func__);
+                break;
+        }
+
+        node->type = NUM;
+        
+        return OK;
+    }
+    
+    Calculate(node->left, var_value);
+    Calculate(node->right, var_value);
 
     switch(node->value)
     {
@@ -97,7 +125,13 @@ CodeError Calculate(Node_t* node)
         case '/':
             node->value = node->left->value / node->right->value;
             break;
+        
+        default:
+            fprintf(stderr, "[DEBUG] %s:%d %s() Incorrect node->value for node->type = OP \n", __FILE__, __LINE__, __func__);
+            return INCORRECT_TREE;
     }
+
+    node->type = NUM;
 
     return OK;
 }
@@ -130,7 +164,12 @@ Node_t* RecursiveGrafPicture(Node_t* node, FILE* file)
             break;
 
         case VAR:
-            fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"%c\"] \n", node, node->value);
+            if (node->value == X)
+                fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"%c\"] \n", node, node->value);
+
+            else if (node->value== Y)
+                fprintf(file, "     node%p[shape=\"circle\", width = 0.8, height = 0.8, label=\"%c\"] \n", node, node->value);
+
             break;
 
         case OP:
@@ -138,7 +177,7 @@ Node_t* RecursiveGrafPicture(Node_t* node, FILE* file)
             break;
         
         default:
-            fprintf(stderr, "[INFO] %s:%d %s() Incorrect node->type value \n", __FILE__, __LINE__, __func__);
+            fprintf(stderr, "[DEBUG] %s:%d %s() Incorrect node->type value \n", __FILE__, __LINE__, __func__);
             break;
     }
 
