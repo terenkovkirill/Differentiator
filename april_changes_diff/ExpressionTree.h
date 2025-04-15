@@ -16,9 +16,10 @@ enum CodeError
     NULL_PTR = 0,
     OK       = 1,
     INCORRECT_TREE = 2,
-    ONLY_ONE_CHILD = 3,
-    OP_IS_A_LEAF = 4,
-    NUM_IS_NOT_LEAF = 5
+    ONLY_ONE_CHILD   = 3,
+    OP_IS_A_LEAF    = 4,
+    NUM_IS_NOT_LEAF = 5,
+    CALCULATE_ERROR = 6
 };
 
 enum TypeNode
@@ -53,6 +54,7 @@ CodeError GrafDump(Node_t* node);
 Node_t* RecursiveGrafDump(Node_t* node, FILE* file);
 CodeError GrafPicture(Node_t* node);
 Node_t* RecursiveGrafPicture(Node_t* node, FILE* file);
+CodeError ComputeNode(Node_t** node);
 int Calculate(Node_t* node, struct VarValue var_value);
 
 #endif

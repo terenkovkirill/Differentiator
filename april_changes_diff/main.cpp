@@ -14,12 +14,12 @@ int main()
 
     GrafDump(div);
 
-    //GrafPicture(div);
+    GrafPicture(div);
     
     Calculate(div, var_value);
     printf("Expression value = %d \n", div->value);
 
-    GrafPicture(div);
+    //GrafPicture(div);
 
     return 0;
 }
@@ -27,15 +27,16 @@ int main()
 /*
 TODO:
 0. Избавиться от switch в RecursiveGrafPicture                                  +
-1. Сделать цветные узлы в GrafDump
+1. Сделать цветные узлы в GrafDump                                              +
 2. Сделать функцию расчёта выражений                                            +
 2.1 Убрать CheckTree в отдельную функцию                                        +
 2.5 Добавить переменную в Calculate                                             +
      (можно добавить структуру со значением x, y в данный момент)               +
-2.9 Спросиль у Макса не нужно ли убрать switch-чи в отдельные функции
+2.9 Спросиль у Макса не нужно ли убрать switch-чи в отдельные функции           +
 3. Объединения или Union
 4. Функция печати в файл в формате TEX
 5. Игрушечный GrafDump                                                          +
+6. Спросить про return values у Макса                                           +
 */
 
 //Отключил -fsanitize=address
