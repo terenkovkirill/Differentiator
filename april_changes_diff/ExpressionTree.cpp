@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include "ExpressionTree.h"
@@ -12,6 +13,29 @@ Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right)
     node->right = right;
 
     return node;
+}
+
+
+CodeError CreateTree(Node_t* node, const char* file_name)
+{
+    FILE* file = fopen(file_name, "r");
+
+    if (file == NULL)
+        fprintf(stderr, "[ERROR] %s:%d %s() NULL file pointer \n", __FILE__, __LINE__, __func__);
+        return NULL_FILE_PTR;
+
+    char* buffer = NULL;
+    size_t buffer_len = 0;
+    ssize_t file_len;
+
+    file_len = getline(&buffer, &buffer_len, stdin);
+    if (file_len == -1)
+        fprintf(stderr, "[ERROR] %s:%d %s() File reading error \n", __FILE__, __LINE__, __func__);
+        return READ_ERROR;
+    
+    //Здесь ничего нет
+    free(buffer);
+    fclose(file);
 }
 
 
