@@ -8,8 +8,8 @@ Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right)
     Node_t* node = (Node_t *)calloc(1, sizeof(Node_t));
 
     node->value = value;
-    node->type = type;
-    node->left = left;
+    node->type  = type;
+    node->left  = left;
     node->right = right;
 
     return node;
@@ -28,14 +28,71 @@ CodeError CreateTree(Node_t* node, const char* file_name)
     size_t buffer_len = 0;
     ssize_t file_len;
 
-    file_len = getline(&buffer, &buffer_len, stdin);
+    file_len = getline(&buffer, &buffer_len, file);
     if (file_len == -1)
         fprintf(stderr, "[ERROR] %s:%d %s() File reading error \n", __FILE__, __LINE__, __func__);
         return READ_ERROR;
     
-    //Здесь ничего нет
+    //================TODO:========
+    
+    node = ReadChar(node, buffer);
+
+    //=============================
+    
     free(buffer);
     fclose(file);
+
+    return OK;
+}
+
+
+Node_t* ReadChar(Node_t* node, char* buffer)
+{
+    int value = 0, value1 = 0;
+    sscanf(buffer, "%d", value);            //считали (
+
+    
+    sscanf(buffer, "%d", value);
+
+    switch(value)
+    {
+        case ADD:
+            sscanf(buffer, "%d", value);                    // считываем )
+            node->left  = ReadChar(node->left, buffer);
+            node->right = ReadChar(node->right, buffer);
+            return CreateNode(ADD, OP, node->left, node->right);
+
+        case SUB:
+            sscanf(buffer, "%d", value);                    // считываем )
+            node->left  = ReadChar(node->left, buffer);
+            node->right = ReadChar(node->right, buffer);
+            return CreateNode(SUB, OP, node->left, node->right);
+
+        case MUL:
+            sscanf(buffer, "%d", value);                    // считываем )
+            node->left  = ReadChar(node->left, buffer);
+            node->right = ReadChar(node->right, buffer);
+            return CreateNode(MUL, OP, node->left, node->right);
+
+        case DIV:
+            sscanf(buffer, "%d", value);                    // считываем )
+            node->left  = ReadChar(node->left, buffer);
+            node->right = ReadChar(node->right, buffer);
+            return CreateNode(DIV, OP, node->left, node->right);
+        
+        case X:
+            sscanf(buffer, "%d", value);                    // считываем )
+            return CreateNode(X, VAR, NULL, NULL);
+        
+        case Y:
+            sscanf(buffer, "%d", value);                    // считываем )
+            return CreateNode(Y, VAR, NULL, NULL);
+        
+        default:
+            sscanf(buffer, "%d", value1);                    // считываем )
+            return CreateNode(value, VAR, NULL, NULL);
+
+    }
 }
 
 

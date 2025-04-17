@@ -53,6 +53,7 @@ struct VarValue
 
 Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right);
 CodeError CreateTree(Node_t* node, const char* file);
+Node_t* ReadChar(Node_t* node, char* buffer);
 CodeError GrafDump(Node_t* node);
 Node_t* RecursiveGrafDump(Node_t* node, FILE* file);
 CodeError GrafPicture(Node_t* node);

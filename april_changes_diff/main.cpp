@@ -6,7 +6,7 @@ int main()
 
     Node_t* num1000 = CreateNode(10, NUM, NULL,    NULL);
     Node_t* num7    = CreateNode(1,    NUM, NULL,    NULL);
-    Node_t* num10   = CreateNode(X,    VAR, NULL,    NULL);
+    Node_t* num10   = CreateNode(102,    VAR, NULL,    NULL);
     Node_t* num3    = CreateNode(24,   NUM, NULL,    NULL);
     Node_t* add     = CreateNode('+',  OP,  num10,   num3);
     Node_t* sub     = CreateNode('-',  OP,  num1000, num7);
@@ -37,7 +37,8 @@ TODO:
 4. Функция печати в файл в формате TEX
 5. Игрушечный GrafDump                                                          +
 6. Спросить про return values у Макса                                           +
-7. Написать функцию считывания в формате PREORDER
+7. Написать функцию считывания в формате PREORDER 
+8. Начать работать с GDB
 */
 
 //Отключил -fsanitize=address
