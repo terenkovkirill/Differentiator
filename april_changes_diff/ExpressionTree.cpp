@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "ExpressionTree.h"
 
 Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right)
@@ -16,13 +17,16 @@ Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right)
 }
 
 
-CodeError CreateTree(Node_t* node, const char* file_name)
+CodeError CreateTree(Node_t** node, const char* file_name)
 {
-    FILE* file = fopen(file_name, "r");
+    assert(node != NULL);
 
+    FILE* file = fopen(file_name, "r");
     if (file == NULL)
+    {
         fprintf(stderr, "[ERROR] %s:%d %s() NULL file pointer \n", __FILE__, __LINE__, __func__);
         return NULL_FILE_PTR;
+    }
 
     char* buffer = NULL;
     size_t buffer_len = 0;
@@ -30,14 +34,15 @@ CodeError CreateTree(Node_t* node, const char* file_name)
 
     file_len = getline(&buffer, &buffer_len, file);
     if (file_len == -1)
+    {
         fprintf(stderr, "[ERROR] %s:%d %s() File reading error \n", __FILE__, __LINE__, __func__);
         return READ_ERROR;
+    }
     
-    //================TODO:========
-    
-    node = ReadChar(node, buffer);
+    //================TODO:=======
 
-    //=============================
+    int ptr = 0;
+    *node = ReadChar(*node, buffer, &ptr);
     
     free(buffer);
     fclose(file);
@@ -46,52 +51,77 @@ CodeError CreateTree(Node_t* node, const char* file_name)
 }
 
 
-Node_t* ReadChar(Node_t* node, char* buffer)
+Node_t* ReadChar(Node_t* node, char* buffer, int* ptr)
 {
-    int value = 0, value1 = 0;
-    sscanf(buffer, "%d", value);            //считали (
-
-    
-    sscanf(buffer, "%d", value);
+    char value =  buffer[*ptr];
+    DBG("buffer: {%s} \n", buffer);
 
     switch(value)
     {
+        case '(':
+            (*ptr)++;
+            DBG("case ( : node = %p", node);
+            node = ReadChar(node, buffer, ptr);
+            (*ptr)++;
+            return node;
+
         case ADD:
-            sscanf(buffer, "%d", value);                    // считываем )
-            node->left  = ReadChar(node->left, buffer);
-            node->right = ReadChar(node->right, buffer);
-            return CreateNode(ADD, OP, node->left, node->right);
+            (*ptr)++;
+            node = CreateNode(ADD, OP, NULL, NULL);
+            DBG("case ADD: node = %p", node);
+            node->left  = ReadChar(node->left,   buffer, ptr);
+            node->right = ReadChar(node->right,  buffer, ptr);
+            return node;
 
         case SUB:
-            sscanf(buffer, "%d", value);                    // считываем )
-            node->left  = ReadChar(node->left, buffer);
-            node->right = ReadChar(node->right, buffer);
-            return CreateNode(SUB, OP, node->left, node->right);
+            (*ptr)++;
+            node = CreateNode(SUB, OP, NULL, NULL);
+            DBG("case SUB: node = %p", node);
+            node->left  = ReadChar(node->left,   buffer, ptr);
+            node->right = ReadChar(node->right,  buffer, ptr);
+            return node;
 
         case MUL:
-            sscanf(buffer, "%d", value);                    // считываем )
-            node->left  = ReadChar(node->left, buffer);
-            node->right = ReadChar(node->right, buffer);
-            return CreateNode(MUL, OP, node->left, node->right);
+            (*ptr)++;
+            node = CreateNode(MUL, OP, NULL, NULL);
+            DBG("case MUL: node = %p", node);
+            node->left  = ReadChar(node->left,   buffer, ptr);
+            node->right = ReadChar(node->right,  buffer, ptr);
+            return node;
 
         case DIV:
-            sscanf(buffer, "%d", value);                    // считываем )
-            node->left  = ReadChar(node->left, buffer);
-            node->right = ReadChar(node->right, buffer);
-            return CreateNode(DIV, OP, node->left, node->right);
+            (*ptr)++;
+            node = CreateNode(DIV, OP, NULL, NULL);
+            DBG("case DIV: node = %p", node);
+            node->left  = ReadChar(node->left,   buffer, ptr);
+            node->right = ReadChar(node->right,  buffer, ptr);
+            return node;
         
         case X:
-            sscanf(buffer, "%d", value);                    // считываем )
+            (*ptr)++;
+            DBG("case X: node = %p", node);
             return CreateNode(X, VAR, NULL, NULL);
         
         case Y:
-            sscanf(buffer, "%d", value);                    // считываем )
+            (*ptr)++;
+            DBG("case Y: node = %p", node);
             return CreateNode(Y, VAR, NULL, NULL);
         
-        default:
-            sscanf(buffer, "%d", value1);                    // считываем )
-            return CreateNode(value, VAR, NULL, NULL);
+        default:    // NUM
+            (*ptr)++;
+            char num[10];
 
+            while(buffer[*ptr] != ')')
+            {
+                char character = buffer[*ptr];
+                strcat(num, &character);
+                DBG("strcat: num = %s", num);
+                (*ptr)++;
+            }
+
+            int num2 = atoi(num);
+            DBG("case NUM: node = %p, value = %d", node, num2);
+            return CreateNode(num2, NUM, NULL, NULL);
     }
 }
 
