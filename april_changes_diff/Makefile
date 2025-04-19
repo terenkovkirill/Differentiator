@@ -25,4 +25,4 @@ run: main.exe
 	./main.exe && $(DOT) $(DOTFLAGS) ExpressionTree.dot -o ExpressionTree.png && $(DOT) $(DOTFLAGS) TreePicture.dot -o TreePicture.png
 
 clean:
-	rm -f *.o main.exe ExpressionTree.png ExpressionTree.dot TreePicture.png TreePicture.dot
+	rm -f *.o main.exe ExpressionTree.png ExpressionTree.dot TreePicture.png TreePicture.dot Log.txt

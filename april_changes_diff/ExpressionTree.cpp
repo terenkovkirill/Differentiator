@@ -17,115 +17,6 @@ Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right)
 }
 
 
-CodeError CreateTree(Node_t** node, const char* file_name)
-{
-    assert(node != NULL);
-
-    FILE* file = fopen(file_name, "r");
-    if (file == NULL)
-    {
-        fprintf(stderr, "[ERROR] %s:%d %s() NULL file pointer \n", __FILE__, __LINE__, __func__);
-        return NULL_FILE_PTR;
-    }
-
-    char* buffer = NULL;
-    size_t buffer_len = 0;
-    ssize_t file_len;
-
-    file_len = getline(&buffer, &buffer_len, file);
-    if (file_len == -1)
-    {
-        fprintf(stderr, "[ERROR] %s:%d %s() File reading error \n", __FILE__, __LINE__, __func__);
-        return READ_ERROR;
-    }
-    
-    //================TODO:=======
-
-    int ptr = 0;
-    *node = ReadChar(*node, buffer, &ptr);
-    
-    free(buffer);
-    fclose(file);
-
-    return OK;
-}
-
-
-Node_t* ReadChar(Node_t* node, char* buffer, int* ptr)
-{
-    char value =  buffer[*ptr];
-    DBG("buffer: {%s} \n", buffer);
-
-    switch(value)
-    {
-        case '(':
-            (*ptr)++;
-            DBG("case ( : node = %p", node);
-            node = ReadChar(node, buffer, ptr);
-            (*ptr)++;
-            return node;
-
-        case ADD:
-            (*ptr)++;
-            node = CreateNode(ADD, OP, NULL, NULL);
-            DBG("case ADD: node = %p", node);
-            node->left  = ReadChar(node->left,   buffer, ptr);
-            node->right = ReadChar(node->right,  buffer, ptr);
-            return node;
-
-        case SUB:
-            (*ptr)++;
-            node = CreateNode(SUB, OP, NULL, NULL);
-            DBG("case SUB: node = %p", node);
-            node->left  = ReadChar(node->left,   buffer, ptr);
-            node->right = ReadChar(node->right,  buffer, ptr);
-            return node;
-
-        case MUL:
-            (*ptr)++;
-            node = CreateNode(MUL, OP, NULL, NULL);
-            DBG("case MUL: node = %p", node);
-            node->left  = ReadChar(node->left,   buffer, ptr);
-            node->right = ReadChar(node->right,  buffer, ptr);
-            return node;
-
-        case DIV:
-            (*ptr)++;
-            node = CreateNode(DIV, OP, NULL, NULL);
-            DBG("case DIV: node = %p", node);
-            node->left  = ReadChar(node->left,   buffer, ptr);
-            node->right = ReadChar(node->right,  buffer, ptr);
-            return node;
-        
-        case X:
-            (*ptr)++;
-            DBG("case X: node = %p", node);
-            return CreateNode(X, VAR, NULL, NULL);
-        
-        case Y:
-            (*ptr)++;
-            DBG("case Y: node = %p", node);
-            return CreateNode(Y, VAR, NULL, NULL);
-        
-        default:    // NUM
-            (*ptr)++;
-            char num[10];
-
-            while(buffer[*ptr] != ')')
-            {
-                char character = buffer[*ptr];
-                strcat(num, &character);
-                DBG("strcat: num = %s", num);
-                (*ptr)++;
-            }
-
-            int num2 = atoi(num);
-            DBG("case NUM: node = %p, value = %d", node, num2);
-            return CreateNode(num2, NUM, NULL, NULL);
-    }
-}
-
-
 CodeError GrafDump(Node_t* node)
 {
     if (!node) return NULL_PTR;
@@ -309,7 +200,7 @@ Node_t* RecursiveGrafPicture(Node_t* node, FILE* file)
             if (node->value == X)
                 fprintf(file, "     node%p[shape=\"circle\", style=\"filled\", fillcolor=\"#FFA07A\", width = 0.8, height = 0.8, label=\"%c\"] \n", node, node->value);
 
-            else if (node->value== Y)
+            else if (node->value == Y)
                 fprintf(file, "     node%p[shape=\"circle\", style=\"filled\", fillcolor=\"#FFA07A\", width = 0.8, height = 0.8, label=\"%c\"] \n", node, node->value);
 
             break;
@@ -337,3 +228,141 @@ Node_t* RecursiveGrafPicture(Node_t* node, FILE* file)
 
     return node;
 }
+
+
+CodeError TextDump(FILE* dump_file, char value, int* ptr, Node_t* node, Node_t* left, Node_t* right, char* buffer, const char* file, int line, const char* func)
+{
+    if (buffer == NULL) 
+    {
+        printf("Null poiter of buffer \n"
+               "called from %s:%d %s\n"
+               "address buffer = %p \n", file, line, func, buffer);
+        return NULL_PTR;
+    }
+
+    fprintf(
+        dump_file,
+        "Case \"%c\" \n"
+        "called from %s:%d %s() \n"
+        "{ \n"
+        "   buffer[*ptr] = buffer[%d] = \"%c\" \n"
+        "   ptr = %p \n"
+        "   node = %p \n"
+        "   node->left = %p"
+        "   node->right = %p"
+        "   buffer: \"%s\" \n"
+        "} \n\n\n",
+        value, file, line, func, *ptr, buffer[*ptr], ptr, node, node->left, node->right, buffer
+    );
+
+    return OK;
+}
+
+
+CodeError CreateTree(Node_t** node, const char* file_name)
+{
+    assert(node != NULL);
+
+    FILE* file = fopen(file_name, "r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "[ERROR] %s:%d %s() NULL file pointer \n", __FILE__, __LINE__, __func__);
+        return NULL_FILE_PTR;
+    }
+
+    char* buffer = NULL;
+    size_t buffer_len = 0;
+    ssize_t file_len  = 0;  
+
+    file_len = getline(&buffer, &buffer_len, file);
+    if (file_len == -1)
+    {
+        fprintf(stderr, "[ERROR] %s:%d %s() File reading error \n", __FILE__, __LINE__, __func__);
+        return READ_ERROR;
+    }
+    
+    //================TODO:=======
+    FILE* dump_file = fopen("Log.txt", "w");
+
+    DBG("buffer = %s", buffer);
+    int ptr = 0;
+    *node = ReadChar(*node, buffer, &ptr, dump_file);
+    //============================
+    
+    free(buffer);
+    fclose(file);
+
+    return OK;
+}
+
+
+Node_t* ReadChar(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
+{
+    Node_t* temp_node = NULL;
+
+    switch(buffer[*ptr])
+    {
+        case '(': 
+            (*ptr)++;
+            node = ReadChar(node, buffer, ptr, dump_file);
+            //TEXT_DUMP(dump_file, value, ptr, node, buffer);
+            (*ptr)++;                                           //закрываем )
+            return node;
+
+        case ADD:
+            (*ptr)++;
+            node = CreateNode(ADD, OP, NULL, NULL);
+            node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
+            node->right = ReadChar(node->right,  buffer, ptr, dump_file);
+            printf("ADD node->left->value = %d, node->right->value = %d \n", node->left->value, node->right->value);
+            TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
+            return node;
+
+        case SUB:
+            (*ptr)++;
+            node = CreateNode(SUB, OP, NULL, NULL);
+            node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
+            node->right = ReadChar(node->right,  buffer, ptr, dump_file);
+            printf("SUB node->left->value = %d, node->right->value = %d \n", node->left->value, node->right->value);
+            TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
+            return node;
+
+        case MUL:
+            (*ptr)++;
+            node = CreateNode(MUL, OP, NULL, NULL);
+            node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
+            node->right = ReadChar(node->right,  buffer, ptr, dump_file);
+            printf("MUL node->left->value = %d, node->right->value = %d \n", node->left->value, node->right->value);
+            TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
+            return node;
+
+        case DIV:
+            (*ptr)++;
+            node = CreateNode(DIV, OP, NULL, NULL);
+            node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
+            node->right = ReadChar(node->right,  buffer, ptr, dump_file);
+            printf("DIV node->left->value = %d, node->right->value = %d \n", node->left->value, node->right->value);
+            TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
+            return node;
+        
+        case X:
+            temp_node = CreateNode(X, VAR, NULL, NULL);
+            TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
+            (*ptr)++;
+            return temp_node;
+        
+        case Y:
+            temp_node = CreateNode(Y, VAR, NULL, NULL);
+            TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
+            (*ptr)++;
+            return temp_node;
+        
+        default:    // NUM
+            temp_node= CreateNode(buffer[*ptr], NUM, NULL, NULL);
+            TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
+            (*ptr)++;
+            return temp_node;
+    }
+}
+
+//Перейти к массиву int buffer[];

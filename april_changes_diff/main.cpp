@@ -2,28 +2,27 @@
 
 int main()
 {
-    const struct VarValue var_value = {102, 0};
+    //const struct VarValue var_value = {102, 0};
 
-    // Node_t* num1000 = CreateNode(10, NUM, NULL,    NULL);
+    // Node_t* num1000 = CreateNode(10,   NUM, NULL,    NULL);
     // Node_t* num7    = CreateNode(1,    NUM, NULL,    NULL);
-    // Node_t* num10   = CreateNode(102,    VAR, NULL,    NULL);
+    // Node_t* num102   = CreateNode(102, NUM, NULL,    NULL);
     // Node_t* num3    = CreateNode(24,   NUM, NULL,    NULL);
-    // Node_t* add     = CreateNode('+',  OP,  num10,   num3);
+    // Node_t* add     = CreateNode('+',  OP,  num102,   num3);
     // Node_t* sub     = CreateNode('-',  OP,  num1000, num7);
     // Node_t* div     = CreateNode('/',  OP,  add,     sub );
 
     Node_t* div = NULL;
-    DBG();
     CreateTree(&div, "Expression.txt");
-    DBG();
+
     GrafDump(div);
 
     GrafPicture(div);
     
-    Calculate(div, var_value);
-    printf("Expression value = %d \n", div->value);
+    //Calculate(div, var_value);
+    //printf("Expression value = %d \n", div->value);
 
-    GrafPicture(div);
+    // GrafPicture(div);
 
     return 0;
 }
@@ -43,6 +42,9 @@ TODO:
 6. Спросить про return values у Макса                                           +
 7. Написать функцию считывания в формате PREORDER 
 8. Начать работать с GDB
+9. Отдебажить функцию ReadChar() для чтения выражений с цифрами
 */
 
 //Отключил -fsanitize=address
+
+//(/(+(102)(3))(-(1000)(7)))

@@ -11,6 +11,9 @@
     #define DBG(fmt, ...)
 #endif
 
+
+#define TEXT_DUMP(dump_file, value, ptr, node, left, right, buffer) TextDump(dump_file, value, ptr, node, left, right, buffer, __FILE__, __LINE__, __func__)
+
 struct Node_t
 {
     int value;
@@ -61,12 +64,13 @@ struct VarValue
 
 Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right);
 CodeError CreateTree(Node_t** node, const char* file);
-Node_t* ReadChar(Node_t* node, char* buffer, int* ptr);
+Node_t* ReadChar(Node_t* node, char* buffer, int* ptr, FILE* dump_file);
 CodeError GrafDump(Node_t* node);
 Node_t* RecursiveGrafDump(Node_t* node, FILE* file);
 CodeError GrafPicture(Node_t* node);
 Node_t* RecursiveGrafPicture(Node_t* node, FILE* file);
 CodeError ComputeNode(Node_t** node);
 int Calculate(Node_t* node, struct VarValue var_value);
+CodeError TextDump(FILE* dump_file, char value, int* ptr, Node_t* node, Node_t* left, Node_t* right, char* buffer, const char* file, int line, const char* func);
 
 #endif
