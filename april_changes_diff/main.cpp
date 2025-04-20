@@ -2,7 +2,7 @@
 
 int main()
 {
-    //const struct VarValue var_value = {102, 0};
+    const struct VarValue var_value = {102, 0};
 
     // Node_t* num1000 = CreateNode(10,   NUM, NULL,    NULL);
     // Node_t* num7    = CreateNode(1,    NUM, NULL,    NULL);
@@ -19,30 +19,23 @@ int main()
 
     GrafPicture(div);
     
-    //Calculate(div, var_value);
-    //printf("Expression value = %d \n", div->value);
+    Calculate(div, var_value);
+    printf("Expression value = %d \n", div->value);
 
-    // GrafPicture(div);
+    //GrafPicture(div);
 
     return 0;
 }
 
 /*
 TODO:
-0. Избавиться от switch в RecursiveGrafPicture                                  +
-1. Сделать цветные узлы в GrafDump                                              +
-2. Сделать функцию расчёта выражений                                            +
-2.1 Убрать CheckTree в отдельную функцию                                        +
-2.5 Добавить переменную в Calculate                                             +
-     (можно добавить структуру со значением x, y в данный момент)               +
-2.9 Спросиль у Макса не нужно ли убрать switch-чи в отдельные функции           +
-3. Объединения или Union
-4. Функция печати в файл в формате TEX
-5. Игрушечный GrafDump                                                          +
-6. Спросить про return values у Макса                                           +
-7. Написать функцию считывания в формате PREORDER 
-8. Начать работать с GDB
-9. Отдебажить функцию ReadChar() для чтения выражений с цифрами
+0. Объединения или Union
+1. Функция печати в файл в формате TEX
+2. Написать функцию считывания в формате PREORDER 
+3. Начать работать с GDB
+4. Отдебажить функцию ReadChar() для чтения выражений с цифрами
+5. Позаботиться о считывании всякой фигни из Expression.txt (x (вместо X), одно число, ...)
+6. Добавить Diff() + #define-ы
 */
 
 //Отключил -fsanitize=address

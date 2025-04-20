@@ -300,68 +300,47 @@ Node_t* ReadChar(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
 {
     Node_t* temp_node = NULL;
 
-    switch(buffer[*ptr])
+    if (buffer[*ptr] == '(')
     {
-        case '(': 
-            (*ptr)++;
-            node = ReadChar(node, buffer, ptr, dump_file);
-            //TEXT_DUMP(dump_file, value, ptr, node, buffer);
-            (*ptr)++;                                           //закрываем )
-            return node;
+        (*ptr)++;
+        node = ReadChar(node, buffer, ptr, dump_file);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, NULL, NULL, buffer);
+        (*ptr)++;                                           //закрываем )
 
-        case ADD:
-            (*ptr)++;
-            node = CreateNode(ADD, OP, NULL, NULL);
-            node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
-            node->right = ReadChar(node->right,  buffer, ptr, dump_file);
-            printf("ADD node->left->value = %d, node->right->value = %d \n", node->left->value, node->right->value);
-            TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
-            return node;
+        return node;
+    }
 
-        case SUB:
-            (*ptr)++;
-            node = CreateNode(SUB, OP, NULL, NULL);
-            node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
-            node->right = ReadChar(node->right,  buffer, ptr, dump_file);
-            printf("SUB node->left->value = %d, node->right->value = %d \n", node->left->value, node->right->value);
-            TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
-            return node;
+    else if (buffer[*ptr] == ADD || buffer[*ptr] == SUB || buffer[*ptr] == MUL || buffer[*ptr] == DIV)
+    {
+        node = CreateNode(buffer[*ptr], OP, NULL, NULL);
 
-        case MUL:
-            (*ptr)++;
-            node = CreateNode(MUL, OP, NULL, NULL);
-            node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
-            node->right = ReadChar(node->right,  buffer, ptr, dump_file);
-            printf("MUL node->left->value = %d, node->right->value = %d \n", node->left->value, node->right->value);
-            TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
-            return node;
+        (*ptr)++;
+        node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
+        node->right = ReadChar(node->right,  buffer, ptr, dump_file);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
 
-        case DIV:
-            (*ptr)++;
-            node = CreateNode(DIV, OP, NULL, NULL);
-            node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
-            node->right = ReadChar(node->right,  buffer, ptr, dump_file);
-            printf("DIV node->left->value = %d, node->right->value = %d \n", node->left->value, node->right->value);
-            TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
-            return node;
-        
-        case X:
-            temp_node = CreateNode(X, VAR, NULL, NULL);
-            TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
-            (*ptr)++;
-            return temp_node;
-        
-        case Y:
-            temp_node = CreateNode(Y, VAR, NULL, NULL);
-            TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
-            (*ptr)++;
-            return temp_node;
-        
-        default:    // NUM
-            temp_node= CreateNode(buffer[*ptr], NUM, NULL, NULL);
-            TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
-            (*ptr)++;
-            return temp_node;
+        return node;
+    }
+
+    else if (buffer[*ptr] == X || buffer[*ptr] == Y)
+    {
+        temp_node = CreateNode(X, VAR, NULL, NULL);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
+        (*ptr)++;
+
+        return temp_node;
+    }
+
+    else //NUM
+    {
+        char temp_str[29] = {buffer[*ptr], '\0'};
+        long value = strtol(temp_str, NULL, 10);
+
+        temp_node= CreateNode(value, NUM, NULL, NULL);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
+        (*ptr)++;
+
+        return temp_node;
     }
 }
 
