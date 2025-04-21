@@ -284,7 +284,7 @@ CodeError ReadExpression(Node_t** node, const char* file_name)
     FILE* dump_file = fopen("Log.txt", "w");
     int ptr = 0;
 
-    *node = CreateTree(*node, buffer, &ptr, dump_file);
+    *node = CreateTree(*node, buffer, &ptr, file_len, dump_file);
     
     free(buffer);
     fclose(file);
@@ -293,14 +293,15 @@ CodeError ReadExpression(Node_t** node, const char* file_name)
 }
 
 
-Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
+Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, int file_len, FILE* dump_file)
 {
+    assert(0 <= *ptr && *ptr < file_len - 1);
     Node_t* temp_node = NULL;
 
     if (buffer[*ptr] == '(')
     {
         (*ptr)++;                                                           //открываем (
-        node = CreateTree(node, buffer, ptr, dump_file);
+        node = CreateTree(node, buffer, ptr, file_len, dump_file);
         TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, NULL, NULL, buffer);
         (*ptr)++;                                                           //закрываем )
 
@@ -312,8 +313,8 @@ Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
         node = CreateNode(buffer[*ptr], OP, NULL, NULL);
 
         (*ptr)++;
-        node->left  = CreateTree(node->left,   buffer, ptr, dump_file);
-        node->right = CreateTree(node->right,  buffer, ptr, dump_file);
+        node->left  = CreateTree(node->left,   buffer, ptr, file_len, dump_file);
+        node->right = CreateTree(node->right,  buffer, ptr, file_len, dump_file);
         TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
 
         return node;
@@ -328,13 +329,15 @@ Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
         return temp_node;
     }
 
-    else //NUM
+    else if ('0' <= buffer[*ptr] && buffer[*ptr] <= '9')
     {
         char temp_str[LENGTH_LINE] = {0};
         int i = 0;
 
         while ('0' <= buffer[*ptr] && buffer[*ptr] <= '9')
         {
+            assert(0 <= *ptr && *ptr < file_len - 1);
+
             temp_str[i] = buffer[*ptr];
             (*ptr)++;
             i++;
@@ -349,5 +352,11 @@ Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
         TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
 
         return temp_node;
+    }
+
+    else
+    {
+        fprintf(stderr, "[ERROR] %s:%d %s() Incorrect Expression [\"%s\", character \"%c\"] \n", __FILE__, __LINE__, __func__, buffer, buffer[*ptr]);
+        assert(0);
     }
 }

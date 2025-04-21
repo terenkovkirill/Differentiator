@@ -66,7 +66,7 @@ const int LENGTH_LINE = 30;
 
 Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right);
 CodeError ReadExpression(Node_t** node, const char* file);
-Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, FILE* dump_file);
+Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, int file_len, FILE* dump_file);
 CodeError GrafDump(Node_t* node);
 Node_t* RecursiveGrafDump(Node_t* node, FILE* file);
 CodeError GrafPicture(Node_t* node);
