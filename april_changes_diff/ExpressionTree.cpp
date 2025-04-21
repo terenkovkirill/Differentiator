@@ -259,7 +259,7 @@ CodeError TextDump(FILE* dump_file, char value, int* ptr, Node_t* node, Node_t* 
 }
 
 
-CodeError CreateTree(Node_t** node, const char* file_name)
+CodeError ReadExpression(Node_t** node, const char* file_name)
 {
     assert(node != NULL);
 
@@ -281,13 +281,10 @@ CodeError CreateTree(Node_t** node, const char* file_name)
         return READ_ERROR;
     }
     
-    //================TODO:=======
     FILE* dump_file = fopen("Log.txt", "w");
-
-    DBG("buffer = %s", buffer);
     int ptr = 0;
-    *node = ReadChar(*node, buffer, &ptr, dump_file);
-    //============================
+
+    *node = CreateTree(*node, buffer, &ptr, dump_file);
     
     free(buffer);
     fclose(file);
@@ -296,16 +293,16 @@ CodeError CreateTree(Node_t** node, const char* file_name)
 }
 
 
-Node_t* ReadChar(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
+Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
 {
     Node_t* temp_node = NULL;
 
     if (buffer[*ptr] == '(')
     {
-        (*ptr)++;
-        node = ReadChar(node, buffer, ptr, dump_file);
+        (*ptr)++;                                                           //открываем (
+        node = CreateTree(node, buffer, ptr, dump_file);
         TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, NULL, NULL, buffer);
-        (*ptr)++;                                           //закрываем )
+        (*ptr)++;                                                           //закрываем )
 
         return node;
     }
@@ -315,8 +312,8 @@ Node_t* ReadChar(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
         node = CreateNode(buffer[*ptr], OP, NULL, NULL);
 
         (*ptr)++;
-        node->left  = ReadChar(node->left,   buffer, ptr, dump_file);
-        node->right = ReadChar(node->right,  buffer, ptr, dump_file);
+        node->left  = CreateTree(node->left,   buffer, ptr, dump_file);
+        node->right = CreateTree(node->right,  buffer, ptr, dump_file);
         TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
 
         return node;
@@ -333,15 +330,24 @@ Node_t* ReadChar(Node_t* node, char* buffer, int* ptr, FILE* dump_file)
 
     else //NUM
     {
-        char temp_str[29] = {buffer[*ptr], '\0'};
+        char temp_str[LENGTH_LINE] = {0};
+        int i = 0;
+
+        while ('0' <= buffer[*ptr] && buffer[*ptr] <= '9')
+        {
+            temp_str[i] = buffer[*ptr];
+            (*ptr)++;
+            i++;
+        }
+
+        temp_str[i] = '\0';
         long value = strtol(temp_str, NULL, 10);
+        if (value == 0)
+            fprintf(stderr, "[ERROR] %s:%d %s() Empty line in strtol() \n", __FILE__, __LINE__, __func__);
 
         temp_node= CreateNode(value, NUM, NULL, NULL);
         TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
-        (*ptr)++;
 
         return temp_node;
     }
 }
-
-//Перейти к массиву int buffer[];

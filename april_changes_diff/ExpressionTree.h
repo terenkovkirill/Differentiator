@@ -62,9 +62,11 @@ struct VarValue
     int y;
 };
 
+const int LENGTH_LINE = 30;
+
 Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right);
-CodeError CreateTree(Node_t** node, const char* file);
-Node_t* ReadChar(Node_t* node, char* buffer, int* ptr, FILE* dump_file);
+CodeError ReadExpression(Node_t** node, const char* file);
+Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, FILE* dump_file);
 CodeError GrafDump(Node_t* node);
 Node_t* RecursiveGrafDump(Node_t* node, FILE* file);
 CodeError GrafPicture(Node_t* node);

@@ -13,7 +13,7 @@ int main()
     // Node_t* div     = CreateNode('/',  OP,  add,     sub );
 
     Node_t* div = NULL;
-    CreateTree(&div, "Expression.txt");
+    ReadExpression(&div, "Expression.txt");
 
     GrafDump(div);
 
@@ -31,11 +31,10 @@ int main()
 TODO:
 0. Объединения или Union
 1. Функция печати в файл в формате TEX
-2. Написать функцию считывания в формате PREORDER 
+2. Написать функцию считывания в формате PREORDER                                           +
 3. Начать работать с GDB
-4. Отдебажить функцию ReadChar() для чтения выражений с цифрами
-5. Позаботиться о считывании всякой фигни из Expression.txt (x (вместо X), одно число, ...)
-6. Добавить Diff() + #define-ы
+4. Позаботиться о считывании всякой фигни из Expression.txt (x (вместо X), одно число, ...)
+5. Добавить Diff() + #define-ы
 */
 
 //Отключил -fsanitize=address
