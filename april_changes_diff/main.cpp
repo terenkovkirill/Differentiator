@@ -2,7 +2,7 @@
 
 int main()
 {
-    const struct VarValue var_value = {102, 0};
+    //const struct VarValue var_value = {102, 0};
 
     // Node_t* num1000 = CreateNode(10,   NUM, NULL,    NULL);
     // Node_t* num7    = CreateNode(1,    NUM, NULL,    NULL);
@@ -12,17 +12,18 @@ int main()
     // Node_t* sub     = CreateNode('-',  OP,  num1000, num7);
     // Node_t* div     = CreateNode('/',  OP,  add,     sub );
 
-    Node_t* div = NULL;
-    ReadExpression(&div, "Expression.txt");
+    Node_t* root1 = NULL;
+    ReadExpression(&root1, "Expression.txt");
 
-    GrafDump(div);
+    GrafDump(root1);
 
-    GrafPicture(div);
+    // GrafPicture(root1);
     
-    Calculate(div, var_value);
-    printf("Expression value = %d \n", div->value);
+    // Calculate(root1, var_value);
+    // printf("Expression value = %d \n", root1->value);
 
-    //GrafPicture(div);
+    Node_t* root2 = Diff(root1);
+    GrafPicture(root2);
 
     return 0;
 }

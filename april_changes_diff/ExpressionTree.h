@@ -75,4 +75,8 @@ CodeError ComputeNode(Node_t** node);
 int Calculate(Node_t* node, struct VarValue var_value);
 CodeError TextDump(FILE* dump_file, char value, int* ptr, Node_t* node, Node_t* left, Node_t* right, char* buffer, const char* file, int line, const char* func);
 
+
+Node_t* CopyTree(Node_t* node);
+Node_t* Diff(Node_t* node);
+
 #endif

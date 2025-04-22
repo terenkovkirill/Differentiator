@@ -210,7 +210,7 @@ Node_t* RecursiveGrafPicture(Node_t* node, FILE* file)
             break;
         
         default:
-            fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->type value \n", __FILE__, __LINE__, __func__);
+            fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->type \n", __FILE__, __LINE__, __func__);
             break;
     }
 
@@ -357,6 +357,6 @@ Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, int file_len, FILE* dum
     else
     {
         fprintf(stderr, "[ERROR] %s:%d %s() Incorrect Expression [\"%s\", character \"%c\"] \n", __FILE__, __LINE__, __func__, buffer, buffer[*ptr]);
-        assert(0);
+        return NULL;        //assert(0);
     }
 }
