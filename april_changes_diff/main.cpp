@@ -1,16 +1,8 @@
-#include "ExpressionTree.h"
+#include "diff.h"
 
 int main()
 {
     //const struct VarValue var_value = {102, 0};
-
-    // Node_t* num1000 = CreateNode(10,   NUM, NULL,    NULL);
-    // Node_t* num7    = CreateNode(1,    NUM, NULL,    NULL);
-    // Node_t* num102   = CreateNode(102, NUM, NULL,    NULL);
-    // Node_t* num3    = CreateNode(24,   NUM, NULL,    NULL);
-    // Node_t* add     = CreateNode('+',  OP,  num102,   num3);
-    // Node_t* sub     = CreateNode('-',  OP,  num1000, num7);
-    // Node_t* div     = CreateNode('/',  OP,  add,     sub );
 
     Node_t* root1 = NULL;
     ReadExpression(&root1, "Expression.txt");
@@ -35,7 +27,10 @@ TODO:
 2. Спросить у Макса про assert(0) && TEXT_DUMP
 3. Начать работать с GDB
 4. Позаботиться о считывании всякой фигни из Expression.txt (x (вместо X), одно число, ...)
-5. Добавить Diff() + #define-ы
+5. Добавить Diff() + #define-ы                                                                  +
+6. Поделить всё на файлы                                                                        +
+7. Добавить возможность считывания sin                                                 
+7. Узнать про зависимости файлов.cpp от файлов.h в Makefile
 */
 
 //Отключил -fsanitize=address

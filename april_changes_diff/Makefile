@@ -10,8 +10,8 @@ all: clean_before_built main.exe
 clean_before_built:
 	@$(MAKE) clean
 
-main.exe: main.o ExpressionTree.o diff.o
-	$(CC) main.o ExpressionTree.o diff.o $(LDFLAGS) -o main.exe
+main.exe: main.o ExpressionTree.o diff.o tree_dump.o
+	$(CC) main.o ExpressionTree.o diff.o tree_dump.o $(LDFLAGS) -o main.exe
 
 main.o: main.cpp ExpressionTree.h Makefile
 	$(CC) $(CFLAGS) -c main.cpp
@@ -19,8 +19,12 @@ main.o: main.cpp ExpressionTree.h Makefile
 ExpressionTree.o: ExpressionTree.cpp ExpressionTree.h Makefile
 	$(CC) $(CFLAGS) -c ExpressionTree.cpp
 
-diff.o: diff.cpp ExpressionTree.h Makefile
+diff.o: diff.cpp diff.h Makefile
 	$(CC) $(CFLAGS) -c diff.cpp
+
+tree_dump.o: tree_dump.cpp ExpressionTree.h Makefile
+	$(CC) $(CFLAGS) -c tree_dump.cpp
+
 
 .PHONY: run clean 
 

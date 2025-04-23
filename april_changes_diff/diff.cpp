@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "ExpressionTree.h"
+#include "diff.h"
 
 Node_t* CopyTree(Node_t* node)
 {
@@ -29,23 +29,20 @@ Node_t* Diff(Node_t* node)
     
     else if (node->type == OP)
     {
-        Node_t* temp_node = NULL;
-
         switch(node->value)
         {
             case ADD:
-                return CreateNode(ADD, OP, Diff (node->left), Diff (node->right));
+                return _ADD(dL, dR);
 
             case SUB:
-                return CreateNode(SUB, OP, Diff (node->left), Diff (node->right));
+                return _SUB(dL, dR);
 
             case MUL:
-                temp_node = CreateNode(ADD, OP, NULL, NULL);
-                temp_node->left = CreateNode(MUL, OP, Diff(node->left), CopyTree(node->right));
-                temp_node->right = CreateNode(MUL, OP, CopyTree(node->left), Diff(node->right));
+                return _ADD(_MUL(dL, cR), _MUL(cL, dR));
 
-                return temp_node;
-            
+            case DIV:
+                return _DIV(_SUB(_MUL(dL, cR), _MUL(dR, cL)), _MUL(cR, cR));
+
             default:
                 fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = OP \n", __FILE__, __LINE__, __func__);
                 return NULL;
