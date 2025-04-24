@@ -39,7 +39,8 @@ enum TypeNode
 {
     NUM = 1,
     OP  = 2,
-    VAR = 3
+    VAR = 3,
+    FUNC = 4
 };
 
 enum TypeOperation
@@ -47,7 +48,8 @@ enum TypeOperation
     ADD = '+',
     SUB = '-',
     MUL = '*',
-    DIV = '/'
+    DIV = '/',
+    POWER = '^'
 };
 
 enum NumVariable
@@ -60,6 +62,15 @@ struct VarValue
 {
     int x;
     int y;
+};
+
+enum ElementaryFunctions
+{
+    SIN = 's',
+    COS = 'c',
+    TAN = 't',
+    EXP = 'e',
+    LN  = 'l'   
 };
 
 const int LENGTH_LINE = 30;

@@ -17,6 +17,119 @@ Node_t* CreateNode(int value, int type, Node_t* left, Node_t* right)
 }
 
 
+CodeError ReadExpression(Node_t** node, const char* file_name)
+{
+    assert(node != NULL);
+
+    FILE* file = fopen(file_name, "r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "[ERROR] %s:%d %s() NULL file pointer \n", __FILE__, __LINE__, __func__);
+        return NULL_FILE_PTR;
+    }
+
+    char* buffer = NULL;
+    size_t buffer_len = 0;
+    ssize_t file_len  = 0;  
+
+    file_len = getline(&buffer, &buffer_len, file);
+    if (file_len == -1)
+    {
+        fprintf(stderr, "[ERROR] %s:%d %s() File reading error \n", __FILE__, __LINE__, __func__);
+        return READ_ERROR;
+    }
+    
+    FILE* dump_file = fopen("Log.txt", "w");
+    int ptr = 0;
+
+    *node = CreateTree(*node, buffer, &ptr, file_len, dump_file);
+    
+    free(buffer);
+    fclose(file);
+
+    return OK;
+}
+
+
+Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, int file_len, FILE* dump_file)
+{
+    assert(0 <= *ptr && *ptr < file_len - 1);
+
+    if (buffer[*ptr] == '(')
+    {
+        (*ptr)++;                                                           //открываем (
+        node = CreateTree(node, buffer, ptr, file_len, dump_file);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, NULL, NULL, buffer);
+        (*ptr)++;                                                           //закрываем )
+
+        return node;
+    }
+
+    else if (buffer[*ptr] == ADD || buffer[*ptr] == SUB || buffer[*ptr] == MUL || buffer[*ptr] == DIV || buffer[*ptr] == POWER)
+    {
+        node = CreateNode(buffer[*ptr], OP, NULL, NULL);
+
+        (*ptr)++;
+        node->left  = CreateTree(node->left,  buffer, ptr, file_len, dump_file);
+        node->right = CreateTree(node->right, buffer, ptr, file_len, dump_file);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
+
+        return node;
+    }
+
+    else if (buffer[*ptr] == SIN || buffer[*ptr] == COS || buffer[*ptr] == TAN || buffer[*ptr] == EXP)
+    {
+        node = CreateNode(buffer[*ptr], FUNC, NULL, NULL);
+
+        (*ptr)++;
+        node->left = CreateTree(node->left, buffer, ptr, file_len, dump_file);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
+
+        return node;
+    }
+
+    else if (buffer[*ptr] == X || buffer[*ptr] == Y)
+    {
+        node = CreateNode(X, VAR, NULL, NULL);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
+        (*ptr)++;
+
+        return node;
+    }
+
+    else if ('0' <= buffer[*ptr] && buffer[*ptr] <= '9')
+    {
+        char temp_str[LENGTH_LINE] = {0};
+        int i = 0;
+
+        while ('0' <= buffer[*ptr] && buffer[*ptr] <= '9')                  //считываем число
+        {
+            assert(0 <= *ptr && *ptr < file_len - 1);
+
+            temp_str[i] = buffer[*ptr];
+            (*ptr)++;
+            i++;
+        }
+
+        temp_str[i] = '\0';
+        long value = strtol(temp_str, NULL, 10);
+        if (value == 0)
+            fprintf(stderr, "[ERROR] %s:%d %s() Empty line in strtol() \n", __FILE__, __LINE__, __func__);
+
+        node = CreateNode(value, NUM, NULL, NULL);
+        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
+
+        return node;
+    }
+
+    else
+    {
+        fprintf(stderr, "[ERROR] %s:%d %s() Incorrect Expression [\"%s\", character \"%c\"] \n", __FILE__, __LINE__, __func__, buffer, buffer[*ptr]);
+        return NULL;        //assert(0);
+    }
+}
+
+
 CodeError CheckNode(Node_t* node)
 {
     assert(node != NULL);
@@ -113,107 +226,4 @@ CodeError ComputeNode(Node_t** node)
     (*node)->type = NUM;
 
     return OK;
-}
-
-
-CodeError ReadExpression(Node_t** node, const char* file_name)
-{
-    assert(node != NULL);
-
-    FILE* file = fopen(file_name, "r");
-    if (file == NULL)
-    {
-        fprintf(stderr, "[ERROR] %s:%d %s() NULL file pointer \n", __FILE__, __LINE__, __func__);
-        return NULL_FILE_PTR;
-    }
-
-    char* buffer = NULL;
-    size_t buffer_len = 0;
-    ssize_t file_len  = 0;  
-
-    file_len = getline(&buffer, &buffer_len, file);
-    if (file_len == -1)
-    {
-        fprintf(stderr, "[ERROR] %s:%d %s() File reading error \n", __FILE__, __LINE__, __func__);
-        return READ_ERROR;
-    }
-    
-    FILE* dump_file = fopen("Log.txt", "w");
-    int ptr = 0;
-
-    *node = CreateTree(*node, buffer, &ptr, file_len, dump_file);
-    
-    free(buffer);
-    fclose(file);
-
-    return OK;
-}
-
-
-Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, int file_len, FILE* dump_file)
-{
-    assert(0 <= *ptr && *ptr < file_len - 1);
-    Node_t* temp_node = NULL;
-
-    if (buffer[*ptr] == '(')
-    {
-        (*ptr)++;                                                           //открываем (
-        node = CreateTree(node, buffer, ptr, file_len, dump_file);
-        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, NULL, NULL, buffer);
-        (*ptr)++;                                                           //закрываем )
-
-        return node;
-    }
-
-    else if (buffer[*ptr] == ADD || buffer[*ptr] == SUB || buffer[*ptr] == MUL || buffer[*ptr] == DIV)
-    {
-        node = CreateNode(buffer[*ptr], OP, NULL, NULL);
-
-        (*ptr)++;
-        node->left  = CreateTree(node->left,   buffer, ptr, file_len, dump_file);
-        node->right = CreateTree(node->right,  buffer, ptr, file_len, dump_file);
-        TEXT_DUMP(dump_file, buffer[*ptr], ptr, node, node->left, node->right, buffer);
-
-        return node;
-    }
-
-    else if (buffer[*ptr] == X || buffer[*ptr] == Y)
-    {
-        temp_node = CreateNode(X, VAR, NULL, NULL);
-        TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
-        (*ptr)++;
-
-        return temp_node;
-    }
-
-    else if ('0' <= buffer[*ptr] && buffer[*ptr] <= '9')
-    {
-        char temp_str[LENGTH_LINE] = {0};
-        int i = 0;
-
-        while ('0' <= buffer[*ptr] && buffer[*ptr] <= '9')
-        {
-            assert(0 <= *ptr && *ptr < file_len - 1);
-
-            temp_str[i] = buffer[*ptr];
-            (*ptr)++;
-            i++;
-        }
-
-        temp_str[i] = '\0';
-        long value = strtol(temp_str, NULL, 10);
-        if (value == 0)
-            fprintf(stderr, "[ERROR] %s:%d %s() Empty line in strtol() \n", __FILE__, __LINE__, __func__);
-
-        temp_node= CreateNode(value, NUM, NULL, NULL);
-        TEXT_DUMP(dump_file, buffer[*ptr], ptr, temp_node, temp_node->left, temp_node->right, buffer);
-
-        return temp_node;
-    }
-
-    else
-    {
-        fprintf(stderr, "[ERROR] %s:%d %s() Incorrect Expression [\"%s\", character \"%c\"] \n", __FILE__, __LINE__, __func__, buffer, buffer[*ptr]);
-        return NULL;        //assert(0);
-    }
 }

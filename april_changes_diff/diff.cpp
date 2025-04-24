@@ -42,10 +42,28 @@ Node_t* Diff(Node_t* node)
 
             case DIV:
                 return _DIV(_SUB(_MUL(dL, cR), _MUL(dR, cL)), _MUL(cR, cR));
+            
+            // case POWER:                     //только для const показателя
+            //     число = Calculate(node->right, var_value);      //Сделать необязательной пердачу var_value && начать создавать копию дерева
+            //     Node_t* power1 = CreateNode(число, NUM, NULL, NULL);
+            //     Node_t* power2 = CreateNode(число - 1, NUM, NULL, NULL);
+            //     return _MUL(power1, _POWER(cR, power2));
 
             default:
                 fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = OP \n", __FILE__, __LINE__, __func__);
                 return NULL;
+        }
+    }
+
+    else if (node->type == FUNC)
+    {
+        switch(node->value)
+        {
+            case SIN:
+                return CreateNode(COS, FUNC, NULL, CopyTree(node->left));
+            
+            case COS:
+                return CreateNode(SUB, OP, NULL, CreateNode(COS, FUNC, NULL, CopyTree(node->left))); 
         }
     }
 

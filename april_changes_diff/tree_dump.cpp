@@ -64,18 +64,22 @@ Node_t* RecursiveGrafDump(Node_t* node, FILE* file)
             fprintf(file, "     node%p[shape=\"Mrecord\", style=\"filled\", fillcolor=\"#87CEEB\", label=\"{node%p | value = %d | type = %d | {left = %p | right = %p}}\"] \n", node, node, node->value, node->type, node->left, node->right);
             break;
         
+        case FUNC:
+            fprintf(file, "     node%p[shape=\"Mrecord\", style=\"filled\", fillcolor=\"#9370DB\", label=\"{node%p | value = %d | type = %d | {left = %p | right = %p}}\"] \n", node, node, node->value, node->type, node->left, node->right);
+            break;
+        
         default:
             fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->type \n", __FILE__, __LINE__, __func__);
             break;
     }
 
-    if (node->left != NULL)
+    if (node->left)
     {
         Node_t* left =  RecursiveGrafDump(node->left, file);
         fprintf(file, "     node%p -> node%p \n\n", node, left);
     }
 
-    if (node->right != NULL)
+    if (node->right)
     {
         Node_t* right =  RecursiveGrafDump(node->right, file);
         fprintf(file, "     node%p -> node%p \n\n", node, right);
@@ -122,6 +126,10 @@ Node_t* RecursiveGrafPicture(Node_t* node, FILE* file)
 
         case OP:
             fprintf(file, "     node%p[shape=\"circle\", style=\"filled\", fillcolor=\"#87CEEB\", width = 0.8, height = 0.8, label=\"%c\"] \n", node, node->value);
+            break;
+
+        case FUNC:
+            fprintf(file, "     node%p[shape=\"Mrecord\", style=\"filled\", fillcolor=\"#9370DB\", label=\"{node%p | value = %d | type = %d | {left = %p | right = %p}}\"] \n", node, node, node->value, node->type, node->left, node->right);
             break;
         
         default:
