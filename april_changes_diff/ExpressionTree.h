@@ -24,15 +24,16 @@ struct Node_t
 
 enum CodeError
 {
-    NULL_PTR        = 0,
-    OK              = 1,
-    INCORRECT_TREE  = 2,
-    ONLY_ONE_CHILD  = 3,
-    OP_IS_A_LEAF    = 4,
-    NUM_IS_NOT_LEAF = 5,
-    CALCULATE_ERROR = 6,
-    NULL_FILE_PTR   = 7,
-    READ_ERROR      = 8
+    NULL_PTR                = 0,
+    OK                      = 1,
+    INCORRECT_TREE          = 2,
+    FUNC_HAS_TWO_CHILDRENS  = 3,
+    FUNC_IS_A_LEAF          = 4,
+    OP_IS_A_LEAF            = 5,
+    NUM_IS_NOT_LEAF         = 6,    
+    CALCULATE_ERROR         = 7,
+    NULL_FILE_PTR           = 8,
+    READ_ERROR              = 9
 };
 
 enum TypeNode
@@ -84,6 +85,8 @@ CodeError GrafPicture(Node_t* node);
 Node_t* RecursiveGrafPicture(Node_t* node, FILE* file);
 CodeError ComputeNode(Node_t** node);
 int Calculate(Node_t* node, struct VarValue var_value);
+CodeError CheckTree(Node_t* node);
+CodeError CheckNode(Node_t* node);
 CodeError TextDump(FILE* dump_file, char value, int* ptr, Node_t* node, Node_t* left, Node_t* right, char* buffer, const char* file, int line, const char* func);
 
 

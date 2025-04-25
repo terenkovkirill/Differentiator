@@ -130,31 +130,9 @@ Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, int file_len, FILE* dum
 }
 
 
-CodeError CheckNode(Node_t* node)
-{
-    assert(node != NULL);
-
-    if ((node->left != NULL) ^ (node->right != NULL))                       //Отсутствует один из двух потомков
-        return ONLY_ONE_CHILD;
-    
-    if (node->type == OP && node->left == NULL && node->right == NULL)
-        return OP_IS_A_LEAF;
-
-    if (node->type == NUM && node->left != NULL && node->right != NULL)
-        return NUM_IS_NOT_LEAF;
-
-    return OK;
-}
-
-
 int Calculate(Node_t* node, struct VarValue var_value)
 {
-    CodeError return_value = CheckNode(node);
-    if (return_value != OK)
-    {
-        fprintf(stderr, "[ERROR] %s:%d %s() Incorrect_tree: %d \n", __FILE__, __LINE__, __func__, return_value);
-        return INCORRECT_TREE;
-    }
+    assert(node != NULL);
 
     if (node->type == NUM)
         return OK;
@@ -189,9 +167,55 @@ int Calculate(Node_t* node, struct VarValue var_value)
         return OK;
     else
     {
-        fprintf(stderr, "[ERROR] %s:%d %s() Tre error code of the ComputeNode() function = %d \n", __FILE__, __LINE__, __func__, error_code);
+        fprintf(stderr, "[ERROR] %s:%d %s() Tree error code of the ComputeNode() function = %d \n", __FILE__, __LINE__, __func__, error_code);
         return CALCULATE_ERROR;
     }
+}
+
+
+CodeError CheckTree(Node_t* node)
+{
+    static CodeError error_code = OK;
+
+    if (!node)  return error_code;
+
+    error_code = CheckNode(node);
+    if (error_code != OK)
+        fprintf(stderr, "[ERROR] %s:%d %s() Incorrect tree: error code = %d \n", __FILE__, __LINE__, __func__, error_code);
+    
+
+    if (node->left)     CheckTree(node->left);
+
+    if (node->right)    CheckTree(node->right);
+
+    return error_code;
+}
+
+
+CodeError CheckNode(Node_t* node)
+{
+    assert(node != NULL);
+
+    if (node->type == NUM || node->type == VAR)
+    { 
+        if (node->left != NULL || node->right != NULL)
+            return NUM_IS_NOT_LEAF;
+    }
+
+    if (node->type == OP && node->left == NULL && node->right == NULL)
+        return OP_IS_A_LEAF;
+
+    if (node->type == FUNC && node->left != NULL && node->right != NULL)
+    {
+        return FUNC_HAS_TWO_CHILDRENS;
+    }
+
+    if (node->type == FUNC && node->left == NULL && node->right == NULL)
+    {
+        return FUNC_IS_A_LEAF;
+    }
+
+    return OK;
 }
 
 

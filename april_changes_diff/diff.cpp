@@ -1,6 +1,7 @@
 #include <assert.h>
 #include "diff.h"
 
+
 Node_t* CopyTree(Node_t* node)
 {
     assert(node != NULL);
@@ -64,6 +65,10 @@ Node_t* Diff(Node_t* node)
             
             case COS:
                 return CreateNode(SUB, OP, NULL, CreateNode(COS, FUNC, NULL, CopyTree(node->left))); 
+
+            default:
+                fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = FUNC \n", __FILE__, __LINE__, __func__);
+                return NULL;
         }
     }
 
