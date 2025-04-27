@@ -41,7 +41,7 @@ CodeError ReadExpression(Node_t** node, const char* file_name)
     
     FILE* dump_file = fopen("Log.txt", "w");
     int ptr = 0;
-
+    
     *node = CreateTree(*node, buffer, &ptr, file_len, dump_file);
     
     free(buffer);
@@ -125,50 +125,82 @@ Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, int file_len, FILE* dum
     else
     {
         fprintf(stderr, "[ERROR] %s:%d %s() Incorrect Expression [\"%s\", character \"%c\"] \n", __FILE__, __LINE__, __func__, buffer, buffer[*ptr]);
-        return NULL;        //assert(0);
+        return NULL;
     }
 }
 
 
-int Calculate(Node_t* node, struct VarValue var_value)
-{
-    assert(node != NULL);
+// Node_t* Calculate(Node_t* node, struct VarValue var_value)
+// {
+//     assert(node != NULL);
 
-    if (node->type == NUM)
-        return OK;
+//     if (node->type == NUM)
+//         return ;
     
-    if (node->type == VAR)
-    {
-        switch(node->value)
-        {
-            case X:
-                node->value = var_value.x;
-                break;
+//     if (node->type == VAR)
+//     {
+//         switch(node->value)
+//         {
+//             case X:
+//                 node->value = var_value.x;
+//                 break;
 
-            case Y:
-                node->value = var_value.y;
-                break;
+//             case Y:
+//                 node->value = var_value.y;
+//                 break;
 
-            default:
-                fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = VAR \n", __FILE__, __LINE__, __func__);
-                break;
-        }
+//             default:
+//                 fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = VAR \n", __FILE__, __LINE__, __func__);
+//                 break;
+//         }
 
-        node->type = NUM;
+//         node->type = NUM;
         
-        return OK;
-    }
+//         return OK;
+//     }
     
-    Calculate(node->left,  var_value);
-    Calculate(node->right, var_value);
+//     Calculate(node->left,  var_value);
+//     Calculate(node->right, var_value);
 
-    CodeError error_code = ComputeNode(&node);
-    if (error_code == OK)
-        return OK;
-    else
+//     int value = ComputeNode(node);
+
+//     if (value == INCORRECT_TREE)
+//     {
+//         fprintf(stderr, "[ERROR] %s:%d %s() INCORRECT_TREE in function ComputeNode() \n", __FILE__, __LINE__, __func__);
+//         return NULL;
+//     }
+
+//     return CreateNode(value, NUM, NULL, NULL);
+// }
+
+
+int ComputeNode(Node_t* node)
+{
+    if (node == NULL)   return NULL_PTR;
+
+    switch(node->value)
     {
-        fprintf(stderr, "[ERROR] %s:%d %s() Tree error code of the ComputeNode() function = %d \n", __FILE__, __LINE__, __func__, error_code);
-        return CALCULATE_ERROR;
+        case ADD:
+            return node->left->value + node->right->value;
+        
+        case SUB:
+            return node->left->value - node->right->value;
+        
+        case MUL:
+            return node->left->value * node->right->value;
+        
+        case DIV:
+            if (node->right->value == 0)
+            {
+                fprintf(stderr, "[ERROR] %s:%d %s() Incorrect Expression: division by 0 \n", __FILE__, __LINE__, __func__);
+                return DIV_BY_ZERO;
+            }
+
+            return node->left->value / node->right->value;
+        
+        default:
+            fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = OP \n", __FILE__, __LINE__, __func__);
+            return INCORRECT_TREE;
     }
 }
 
@@ -214,40 +246,6 @@ CodeError CheckNode(Node_t* node)
     {
         return FUNC_IS_A_LEAF;
     }
-
-    return OK;
-}
-
-
-CodeError ComputeNode(Node_t** node)
-{
-    if (node == NULL  || *node == NULL)
-        return NULL_PTR;
-
-    switch((*node)->value)
-    {
-        case ADD:
-            (*node)->value = (*node)->left->value + (*node)->right->value;
-            break;
-        
-        case SUB:
-            (*node)->value = (*node)->left->value - (*node)->right->value;
-            break;
-        
-        case MUL:
-            (*node)->value = (*node)->left->value * (*node)->right->value;
-            break;
-        
-        case DIV:
-            (*node)->value = (*node)->left->value / (*node)->right->value;
-            break;
-        
-        default:
-            fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = OP \n", __FILE__, __LINE__, __func__);
-            return INCORRECT_TREE;
-    }
-
-    (*node)->type = NUM;
 
     return OK;
 }
