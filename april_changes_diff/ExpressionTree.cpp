@@ -130,64 +130,50 @@ Node_t* CreateTree(Node_t* node, char* buffer, int* ptr, int file_len, FILE* dum
 }
 
 
-// Node_t* Calculate(Node_t* node, struct VarValue var_value)
-// {
-//     assert(node != NULL);
+int Calculate(Node_t* node, struct VarValue var_value)
+{
+    assert(node != NULL);
 
-//     if (node->type == NUM)
-//         return ;
+    if (node->type == NUM)
+        return node->value;
     
-//     if (node->type == VAR)
-//     {
-//         switch(node->value)
-//         {
-//             case X:
-//                 node->value = var_value.x;
-//                 break;
+    if (node->type == VAR)
+    {
+        switch(node->value)
+        {
+            case X:
+                return var_value.x;
 
-//             case Y:
-//                 node->value = var_value.y;
-//                 break;
+            case Y:
+                return var_value.y;
 
-//             default:
-//                 fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = VAR \n", __FILE__, __LINE__, __func__);
-//                 break;
-//         }
-
-//         node->type = NUM;
-        
-//         return OK;
-//     }
+            default:
+                fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = VAR \n", __FILE__, __LINE__, __func__);
+                return INCORRECT_TREE;
+        }
+    }
     
-//     Calculate(node->left,  var_value);
-//     Calculate(node->right, var_value);
+    int left  = Calculate(node->left,  var_value);
+    int right = Calculate(node->right, var_value);
 
-//     int value = ComputeNode(node);
-
-//     if (value == INCORRECT_TREE)
-//     {
-//         fprintf(stderr, "[ERROR] %s:%d %s() INCORRECT_TREE in function ComputeNode() \n", __FILE__, __LINE__, __func__);
-//         return NULL;
-//     }
-
-//     return CreateNode(value, NUM, NULL, NULL);
-// }
+    return ComputeNode(node, left, right);
+}
 
 
-int ComputeNode(Node_t* node)
+int ComputeNode(Node_t* node, int left, int right)
 {
     if (node == NULL)   return NULL_PTR;
 
     switch(node->value)
     {
         case ADD:
-            return node->left->value + node->right->value;
+            return left + right;
         
         case SUB:
-            return node->left->value - node->right->value;
+            return left - right;
         
         case MUL:
-            return node->left->value * node->right->value;
+            return left * right;
         
         case DIV:
             if (node->right->value == 0)
@@ -196,7 +182,7 @@ int ComputeNode(Node_t* node)
                 return DIV_BY_ZERO;
             }
 
-            return node->left->value / node->right->value;
+            return left / right;
         
         default:
             fprintf(stderr, "[ERROR] %s:%d %s() Incorrect node->value for node->type = OP \n", __FILE__, __LINE__, __func__);

@@ -2,7 +2,7 @@
 
 int main()
 {
-    //const struct VarValue var_value = {102, 0};
+    const struct VarValue var_value = {102, 0};
     
     Node_t* root1 = NULL;
     ReadExpression(&root1, "Expression.txt");
@@ -13,13 +13,16 @@ int main()
 
     GrafDump(root1);
 
-    // GrafPicture(root1);
+    GrafPicture(root1);
     
-    // Calculate(root1, var_value);
-    // printf("Expression value = %d \n", root1->value);
+    int result = Calculate(root1, var_value);
+    if (result == INCORRECT_TREE || result == DIV_BY_ZERO)
+        fprintf(stderr, "[ERROR] %s:%d %s() Error: %d in function Calculate() \n", __FILE__, __LINE__, __func__, result);
 
-    Node_t* root2 = Diff(root1);
-    GrafPicture(root2);
+    printf("Expression value = %d \n", result);
+
+    // Node_t* root2 = Diff(root1);
+    // GrafPicture(root2);
 
     return 0;
 }
@@ -34,7 +37,7 @@ TODO:
 8. Узнать про зависимости файлов.cpp от файлов.h в Makefile
 12. Dump CheckTree() в Log.txt && assert(0) - спросить у Макса
 ===========================
-10. Поработать с функцией CAlculate Сделать необязательной пердачу var_value &&
+10. Поработать с функцией CAlculate: Добавить case FUNC && сделать необязательной пердачу var_value &&
                      начать создавать копию дерева && сделать возможным одного потомка для OP
 11. Добавить SIN, COS, POWER
 
