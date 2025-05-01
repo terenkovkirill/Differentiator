@@ -45,7 +45,7 @@ TODO:
 11. Добавить SIN, COS, POWER
 
 */
-
+//ginjr
 //Отключил -fsanitize=address
 
 //(/(+(102)(3))(-(1000)(7)))
