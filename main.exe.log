@@ -1,0 +1,99 @@
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Users\KirillT\Desktop\Differentiator\main.exe,
+
+ВНЕЗАПНО: signal (22, 0x00): SIGABRT: Аварийное завершение программы, вызвана функция abort(). 
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#1: TXLib [Ver: 00173a, Rev: 173, Date: 2024-06-23 22:37:05 +0400], Instance: 0x004F52FC (32-bit), Flags: Cmdre0, Thread: 0x14D4 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 173, Date: 2024-06-23 22:37:05 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	c:\users\kirillt\codeblocks\mingw\include\txlib.h
+Compiled:	Dec  5 2024 23:17:59, GNU g++ 4.8.1, std=201103L, MinGW Runtime 3.20, 32-bit, Debug
+Started:	Dec 05 2024 23:18:20
+
+Run file:	C:\Users\KirillT\Desktop\Differentiator\main.exe
+Directory:	C:\Users\KirillT\Desktop\Differentiator
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Users\KirillT\Desktop\Differentiator\main.exe,
+
+ВНЕЗАПНО: signal (22, 0x00): SIGABRT: Аварийное завершение программы, вызвана функция abort(). 
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#1: TXLib [Ver: 00173a, Rev: 173, Date: 2024-06-23 22:37:05 +0400], Instance: 0x004F52FC (32-bit), Flags: Cmdre0, Thread: 0x2DFC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 173, Date: 2024-06-23 22:37:05 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	c:\users\kirillt\codeblocks\mingw\include\txlib.h
+Compiled:	Dec  5 2024 23:17:59, GNU g++ 4.8.1, std=201103L, MinGW Runtime 3.20, 32-bit, Debug
+Started:	Dec 05 2024 23:19:43
+
+Run file:	C:\Users\KirillT\Desktop\Differentiator\main.exe
+Directory:	C:\Users\KirillT\Desktop\Differentiator
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Users\KirillT\Desktop\Differentiator\main.exe,
+
+ВНЕЗАПНО: signal (22, 0x00): SIGABRT: Аварийное завершение программы, вызвана функция abort(). 
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#1: TXLib [Ver: 00173a, Rev: 173, Date: 2024-06-23 22:37:05 +0400], Instance: 0x004F52FC (32-bit), Flags: Cmdre0, Thread: 0x16C8 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 173, Date: 2024-06-23 22:37:05 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	c:\users\kirillt\codeblocks\mingw\include\txlib.h
+Compiled:	Dec  5 2024 23:17:59, GNU g++ 4.8.1, std=201103L, MinGW Runtime 3.20, 32-bit, Debug
+Started:	Dec 05 2024 23:23:56
+
+Run file:	C:\Users\KirillT\Desktop\Differentiator\main.exe
+Directory:	C:\Users\KirillT\Desktop\Differentiator
+
+--------------------------------------------------
