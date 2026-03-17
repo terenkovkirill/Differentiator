@@ -105,14 +105,6 @@ Node_t* diff(Node_t* node)
                 
                 return NewNode(OP, ADD, NewNode(OP, MUL, dL, cR), NewNode(OP, MULL, cL, dR));
             }
-
-            //TODO: добавить сюда ещё кучу (19 - 2) case
         }
     }
-    
 }
-
-/*Миша:         The term 'run' is not recognized....
-                Нужно ли, чтобы 2 последние функции возвращали нули?
-                ?? по реализации дифферециатора
-*/
