@@ -1,4 +1,3 @@
-# Артефакты сборки
 *.o
 *.obj
 *.out
@@ -6,26 +5,23 @@
 main
 main.exe
 
-# Библиотеки
 *.a
 *.lib
 *.so
 *.dll
 *.dylib
 
-# Отладочные и аварийные файлы
+
 *.dSYM/
 *.stackdump
 *.core
 core
 vgcore.*
 
-# Автогенерируемые файлы проекта
-# graf_dump.png НЕ игнорируется: его предполагается коммитить
-#graf_dump.png
+
 graf_dump.dot
 
-# Временные файлы редакторов
+*.dmp
 *~
 *.tmp
 *.temp
@@ -33,17 +29,16 @@ graf_dump.dot
 *.swp
 *.swo
 
-# Настройки IDE
+
 .vscode/
 .idea/
 .vs/
 *.code-workspace
 
-# CMake/CLion (на случай локальных экспериментов)
+
 CMakeCache.txt
 CMakeFiles/
 cmake-build-*/
 
-# Файлы ОС
 .DS_Store
 Thumbs.db
