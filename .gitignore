@@ -19,8 +19,7 @@ core
 vgcore.*
 
 
-graf_dump.dot
-
+*.dot
 *.dmp
 *~
 *.tmp
