@@ -2,6 +2,7 @@
 *.obj
 *.out
 *.exe
+*.log
 main
 main.exe
 
